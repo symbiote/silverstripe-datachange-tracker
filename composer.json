@@ -1,0 +1,23 @@
+{
+	"name": "sheadawson/silverstripe-datachange-tracker",
+	"description": "Record and track changes to any dataobjects. View chages/diffs in model admin.",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "data", "tracker"],
+	"homepage": "http://github.com/silverstripe-australia/datachange-tracker",
+	"authors": [
+	{
+		"name": "Marcus Nyeholt",
+		"email": "marcus@silverstripe.com.au"
+	},
+	{
+		"name": "Shea Dawson",
+		"email": "shea@silverstripe.com.au"
+	}
+	],
+
+	"require":
+	{
+		"silverstripe/framework": "3.*",
+		"composer/installers": "*"
+	}
+}
