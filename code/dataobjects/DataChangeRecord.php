@@ -26,9 +26,9 @@ class DataChangeRecord extends DataObject {
 	);
 
 	public static $summary_fields = array(
-		'ClassID' 			=> 'Object ID',
-		'ClassType'		 	=> 'Object Class',
-		'ObjectTitle'		=> 'Object Title',
+		'ClassType'		 	=> 'Record Class',
+		'ClassID' 			=> 'Record ID',
+		'ObjectTitle'		=> 'Record Title',
 		'ChangedBy.Title' 	=> 'User',
 		'Created'			=> 'Modification Date',
 	);
@@ -46,9 +46,9 @@ class DataChangeRecord extends DataObject {
 		
 		$fields = FieldList::create(
 			ToggleCompositeField::create('Details', 'Details', array(
-				ReadonlyField::create('ClassType', 'Object Class'),
-				ReadonlyField::create('ClassID', 'Object ID'),
-				ReadonlyField::create('ObjectTitle', 'Object Title'),
+				ReadonlyField::create('ClassType', 'Record Class'),
+				ReadonlyField::create('ClassID', 'Record ID'),
+				ReadonlyField::create('ObjectTitle', 'Record Title'),
 				ReadonlyField::create('Created', 'Modification Date'),
 				ReadonlyField::create('Stage', 'Stage'),
 				ReadonlyField::create('User', 'User', $this->getMemberDetails()),
@@ -56,20 +56,20 @@ class DataChangeRecord extends DataObject {
 				ReadonlyField::create('Referer', 'Referer'),
 				ReadonlyField::create('RemoteIP', 'Remote IP'),
 				ReadonlyField::create('Agent', 'Agent'),
-			))->setStartClosed(false),
+			))->setStartClosed(false)->addExtraClass('datachange-field'),
 			ToggleCompositeField::create('RawData', 'Raw Data', array(
 				ReadonlyField::create('Before'),
 				ReadonlyField::create('After'),
-			))
+			))->addExtraClass('datachange-field')
 		);
 		
 		if (strlen($this->Before)) {
-			$before = Object::create($this->ClassType, unserialize($this->Before));
-			$after 	= Object::create($this->ClassType, unserialize($this->After));
+			$before = Object::create($this->ClassType, unserialize($this->Before), true);
+			$after 	= Object::create($this->ClassType, unserialize($this->After), true);
 			$diff 	= DataDifferencer::create($before, $after);
 			$diffed = $diff->diffedData();
 			$diffText = '';
-			
+
 			$changedFields = array();
 			foreach ($diffed->toMap() as $field => $prop) {
 				$changedFields[] = $readOnly = ReadonlyField::create('ChangedField' . $field, $field, $prop);
@@ -79,7 +79,8 @@ class DataChangeRecord extends DataObject {
 
 			$fields->insertBefore(
 				ToggleCompositeField::create('FieldChanges', 'Changed Fields', $changedFields)
-				->setStartClosed(false),
+				->setStartClosed(false)
+				->addExtraClass('datachange-field'),
 				'RawData'
 			);
 		}

@@ -9,3 +9,7 @@
 	padding: 2px;
 	color: #ff4444;
 }
+
+.datachange-field.ss-toggle .ui-accordion-content .field label{
+	float: left;
+}
