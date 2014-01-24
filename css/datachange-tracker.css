@@ -1,0 +1,11 @@
+.datachange-field ins {
+	background-color: #DFD;
+	padding: 2px;
+	text-decoration: none;
+}
+
+.datachange-field del {
+	background-color: #FDD;
+	padding: 2px;
+	color: #ff4444;
+}

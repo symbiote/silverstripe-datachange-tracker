@@ -9,15 +9,15 @@
 class DataChangeRecord extends DataObject {
 	public static $db = array(
 		'ClassType'			=> 'Varchar',
-		'ObjectTitle'		=> 'Varchar(255)',
 		'ClassID'			=> 'Int',
+		'ObjectTitle'		=> 'Varchar(255)',
 		'Before'			=> 'Text',
 		'After'				=> 'Text',
 		'Stage'				=> 'Text',
 		'CurrentEmail'		=> 'Text',
 		'CurrentURL'		=> 'Varchar(255)',
-		'RemoteIP'			=> 'Varchar(128)',
 		'Referer'			=> 'Varchar(255)',
+		'RemoteIP'			=> 'Varchar(128)',
 		'Agent'				=> 'Varchar(255)',
 	);
 
@@ -26,11 +26,11 @@ class DataChangeRecord extends DataObject {
 	);
 
 	public static $summary_fields = array(
-		'ClassID' => 'Item ID',
-		'ClassType' => 'Class',
-		'ObjectTitle' => 'Title',
-		'ChangedBy.Title' => 'User',
-		'Created'		=> 'Modified',
+		'ClassID' 			=> 'Object ID',
+		'ClassType'		 	=> 'Object Class',
+		'ObjectTitle'		=> 'Object Title',
+		'ChangedBy.Title' 	=> 'User',
+		'Created'			=> 'Modification Date',
 	);
 	
 	public static $searchable_fields = array(
@@ -42,25 +42,46 @@ class DataChangeRecord extends DataObject {
 	public static $default_sort = 'Created DESC';
 	
 	public function getCMSFields($params = null) {
-		$fields = parent::getCMSFields($params);
+		Requirements::css(DATACHANGE_PATH . '/css/datachange-tracker.css');
 		
-		$fields->addFieldToTab('Root.Main', new ReadonlyField('Created', 'Created'), 'ClassType');
-		
-//		$fields->replaceField('Before', new ReadonlyField('Before'));
-//		$fields->replaceField('After', new ReadonlyField('After'));
+		$fields = FieldList::create(
+			ToggleCompositeField::create('Details', 'Details', array(
+				ReadonlyField::create('ClassType', 'Object Class'),
+				ReadonlyField::create('ClassID', 'Object ID'),
+				ReadonlyField::create('ObjectTitle', 'Object Title'),
+				ReadonlyField::create('Created', 'Modification Date'),
+				ReadonlyField::create('Stage', 'Stage'),
+				ReadonlyField::create('User', 'User', $this->getMemberDetails()),
+				ReadonlyField::create('CurrentURL', 'URL'),
+				ReadonlyField::create('Referer', 'Referer'),
+				ReadonlyField::create('RemoteIP', 'Remote IP'),
+				ReadonlyField::create('Agent', 'Agent'),
+			))->setStartClosed(false),
+			ToggleCompositeField::create('RawData', 'Raw Data', array(
+				ReadonlyField::create('Before'),
+				ReadonlyField::create('After'),
+			))
+		);
 		
 		if (strlen($this->Before)) {
-			$before = new DataObject(unserialize($this->Before));
-			$after = new DataObject(unserialize($this->After));
-			$diff = new DataDifferencer($before, $after);
+			$before = Object::create($this->ClassType, unserialize($this->Before));
+			$after 	= Object::create($this->ClassType, unserialize($this->After));
+			$diff 	= DataDifferencer::create($before, $after);
 			$diffed = $diff->diffedData();
 			$diffText = '';
-
-			$fields->addFieldToTab('Root.Main', new HeaderField('FieldChanges', 'Changed Fields'));
 			
-			foreach ($diffed->getAllFields() as $field => $prop) {
-				$fields->addFieldToTab('Root.Main', new TextField('ChangedField'.$field, $field, $prop));
+			$changedFields = array();
+			foreach ($diffed->toMap() as $field => $prop) {
+				$changedFields[] = $readOnly = ReadonlyField::create('ChangedField' . $field, $field, $prop);
+				$readOnly->dontEscape = true;
+				$readOnly->addExtraClass('datachange-field');
 			}
+
+			$fields->insertBefore(
+				ToggleCompositeField::create('FieldChanges', 'Changed Fields', $changedFields)
+				->setStartClosed(false),
+				'RawData'
+			);
 		}
 
 		$fields = $fields->makeReadonly();
@@ -68,12 +89,23 @@ class DataChangeRecord extends DataObject {
 		return $fields;
 	}
 	
+
+	/**
+	 * Track a change to a DataObject
+	 * @return DataChangeRecord
+	 **/
 	public static function track(DataObject $changedObject) {
-		$record = new DataChangeRecord();
+		$changes = $changedObject->getChangedFields(true, 2);
+		
+		if (empty($changes)) {
+			return;
+		}
+
+		$record = DataChangeRecord::create();
 		$record->ClassType = $changedObject->ClassName;
 		$record->ClassID = $changedObject->ID;
 		$record->ObjectTitle = $changedObject->Title;
-		$changes = $changedObject->getChangedFields();
+		
 		
 		$before = array();
 		$after = array();
@@ -114,7 +146,34 @@ class DataChangeRecord extends DataObject {
 		return $record;
 	}
 	
+
+	/**
+	 * @return boolean
+	 **/
 	public function canDelete($member = null) {
 		return false;
+	}
+
+
+	/**
+	 * @return string
+	 **/
+	public function getTitle(){
+		return $this->ClassType . ' #' . $this->ClassID;
+	}
+
+
+	/**
+	 * Return a description/summary of the user
+	 * @return string
+	 **/
+	public function getMemberDetails(){
+		if($user = $this->ChangedBy()){
+			$name = $user->getTitle();
+			if($user->Email){
+				$name .= " <$user->Email>";
+			}
+			return $name;
+		}
 	}
 }

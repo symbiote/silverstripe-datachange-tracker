@@ -6,7 +6,7 @@
  * @author marcus@silverstripe.com.au
  * @license BSD License http://silverstripe.org/bsd-license/
  */
-class ChangeRecordable extends DataObjectDecorator {
+class ChangeRecordable extends DataExtension {
 	
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
