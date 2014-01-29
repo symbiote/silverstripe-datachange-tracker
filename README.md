@@ -28,3 +28,14 @@ SiteTree:
   extensions:
     - ChangeRecordable
 ```
+
+## Ignoring fields
+
+In some cases it may not be desirable to track changes to all fields of an object. You can define ignored fields in your yml config like so:
+
+```
+ChangeRecordable:
+  ignored_fields:
+    NameOfObjectClass:
+      - NameOfField
+```

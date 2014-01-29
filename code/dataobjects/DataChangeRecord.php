@@ -60,7 +60,7 @@ class DataChangeRecord extends DataObject {
 			ToggleCompositeField::create('RawData', 'Raw Data', array(
 				ReadonlyField::create('Before'),
 				ReadonlyField::create('After'),
-			))->addExtraClass('datachange-field')
+			))->setStartClosed(false)->addExtraClass('datachange-field')
 		);
 		
 		if (strlen($this->Before)) {
@@ -97,7 +97,19 @@ class DataChangeRecord extends DataObject {
 	 **/
 	public static function track(DataObject $changedObject) {
 		$changes = $changedObject->getChangedFields(true, 2);
-		
+		if (count($changes)) {
+			// remove any changes to ignored fields
+			$ignored = $changedObject->getIgnoredFields();
+			if($ignored){
+				$changes = array_diff($changes, $ignored);	
+				foreach ($ignored as $ignore) {
+					if (isset($changes[$ignore])) {
+						unset($changes[$ignore]);
+					}
+				}
+			}	
+		}
+
 		if (empty($changes)) {
 			return;
 		}
@@ -177,4 +189,5 @@ class DataChangeRecord extends DataObject {
 			return $name;
 		}
 	}
+
 }
