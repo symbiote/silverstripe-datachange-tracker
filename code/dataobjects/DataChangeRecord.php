@@ -8,6 +8,7 @@
  */
 class DataChangeRecord extends DataObject {
 	public static $db = array(
+		'ChangeType'		=> 'Varchar',
 		'ClassType'			=> 'Varchar',
 		'ClassID'			=> 'Int',
 		'ObjectTitle'		=> 'Varchar(255)',
@@ -26,6 +27,7 @@ class DataChangeRecord extends DataObject {
 	);
 
 	public static $summary_fields = array(
+		'ChangeType'		=> 'Change Type',
 		'ClassType'		 	=> 'Record Class',
 		'ClassID' 			=> 'Record ID',
 		'ObjectTitle'		=> 'Record Title',
@@ -34,9 +36,14 @@ class DataChangeRecord extends DataObject {
 	);
 	
 	public static $searchable_fields = array(
+		'ChangeType',
 		'ObjectTitle',
 		'ClassType',
 		'ClassID',
+	);
+
+	public static $indexes = array(
+		'ClassID_Type' => '("ClassID","ClassType")',
 	);
 	
 	public static $default_sort = 'Created DESC';
@@ -46,6 +53,7 @@ class DataChangeRecord extends DataObject {
 		
 		$fields = FieldList::create(
 			ToggleCompositeField::create('Details', 'Details', array(
+				ReadonlyField::create('ChangeType', 'Type of change'),
 				ReadonlyField::create('ClassType', 'Record Class'),
 				ReadonlyField::create('ClassID', 'Record ID'),
 				ReadonlyField::create('ObjectTitle', 'Record Title'),
@@ -95,7 +103,7 @@ class DataChangeRecord extends DataObject {
 	 * Track a change to a DataObject
 	 * @return DataChangeRecord
 	 **/
-	public static function track(DataObject $changedObject) {
+	public static function track(DataObject $changedObject, $type = 'Change') {
 		$changes = $changedObject->getChangedFields(true, 2);
 		if (count($changes)) {
 			// remove any changes to ignored fields
@@ -110,22 +118,33 @@ class DataChangeRecord extends DataObject {
 			}	
 		}
 
-		if (empty($changes)) {
+		if ((empty($changes) && $type == 'Change')
+			|| ($type === 'Delete' && Versioned::get_reading_mode() === 'Stage.Live')
+		) {
 			return;
 		}
-
+		
 		$record = DataChangeRecord::create();
+		$record->ChangeType = $type;
 		$record->ClassType = $changedObject->ClassName;
 		$record->ClassID = $changedObject->ID;
 		$record->ObjectTitle = $changedObject->Title;
-		
+		$record->Stage = Versioned::get_reading_mode();
 		
 		$before = array();
 		$after = array();
 		
-		foreach ($changes as $field => $change) {
-			$before[$field] = $change['before'];
-			$after[$field] = $change['after'];
+		if($type != 'Change'){ // If we are (un)publishing we want to store the entire object
+			$before = ($type === 'Unpublish') ? $changedObject->toMap() : null;
+			$after = ($type === 'Publish') ? $changedObject->toMap() : null;
+		} else { // Else we're tracking the changes to the object
+			foreach ($changes as $field => $change) {
+				if ($field == 'SecurityID') {
+					continue;
+				}
+				$before[$field] = $change['before'];
+				$after[$field] = $change['after'];
+			}
 		}
 		
 		$record->Before = serialize($before);
@@ -151,9 +170,6 @@ class DataChangeRecord extends DataObject {
 		$record->RemoteIP = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : (Director::is_cli() ? 'CLI' : 'Unknown remote addr'); 
 		$record->Referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 		$record->Agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-		
-		$s = Versioned::get_reading_mode();
-		$record->Stage = Versioned::get_reading_mode();
 		
 		$record->write();
 		return $record;
