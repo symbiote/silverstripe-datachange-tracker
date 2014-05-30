@@ -11,7 +11,7 @@
 
 ## Description
 
-Record and track changes to any dataobjects. View chages/diffs in model admin.
+Record and track changes and deletes of any dataobjects. View chages/diffs in model admin.
 
 ## Installation
 
@@ -24,10 +24,12 @@ Install via composer, run dev/build
 Add the ChangeRecordable extension to the dataobjects you wish to track
 
 ```
-SiteTree:
+MyDataObject:
   extensions:
     - ChangeRecordable
 ```
+
+If you are applying the extension to the SiteTree, use the SiteTreeChangeRecordable extension to record publish/unpublish actions
 
 ## Ignoring fields
 
