@@ -14,6 +14,11 @@ class ChangeRecordable extends DataExtension {
 		parent::onBeforeWrite();
 		DataChangeRecord::track($this->owner);
 	}
+	
+	public function onBeforeDelete() {
+		parent::onBeforeDelete();
+		DataChangeRecord::track($this->owner, 'Delete');
+	}
 
 	public function getIgnoredFields(){
 		$ignored = Config::inst()->get('ChangeRecordable', 'ignored_fields');
