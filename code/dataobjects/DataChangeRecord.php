@@ -109,7 +109,7 @@ class DataChangeRecord extends DataObject {
 			// remove any changes to ignored fields
 			$ignored = $changedObject->getIgnoredFields();
 			if($ignored){
-				$changes = array_diff($changes, $ignored);	
+				$changes = array_diff_key($changes, $ignored);	
 				foreach ($ignored as $ignore) {
 					if (isset($changes[$ignore])) {
 						unset($changes[$ignore]);
