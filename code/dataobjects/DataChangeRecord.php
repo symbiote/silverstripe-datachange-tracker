@@ -7,7 +7,7 @@
  * @license BSD License http://silverstripe.org/bsd-license/
  */
 class DataChangeRecord extends DataObject {
-	public static $db = array(
+	private static $db = array(
 		'ChangeType'		=> 'Varchar',
 		'ClassType'			=> 'Varchar',
 		'ClassID'			=> 'Int',
@@ -22,11 +22,11 @@ class DataChangeRecord extends DataObject {
 		'Agent'				=> 'Varchar(255)',
 	);
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'ChangedBy'			=> 'Member',
 	);
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		'ChangeType'		=> 'Change Type',
 		'ClassType'		 	=> 'Record Class',
 		'ClassID' 			=> 'Record ID',
@@ -35,19 +35,19 @@ class DataChangeRecord extends DataObject {
 		'Created'			=> 'Modification Date',
 	);
 	
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'ChangeType',
 		'ObjectTitle',
 		'ClassType',
 		'ClassID',
 	);
-
-	public static $indexes = array(
+	
+	private static $indexes = array(
 		'ClassID_Type' => '("ClassID","ClassType")',
 	);
 	
-	public static $default_sort = 'Created DESC';
-	
+	private static $default_sort = 'Created DESC';
+
 	public function getCMSFields($params = null) {
 		Requirements::css(DATACHANGE_PATH . '/css/datachange-tracker.css');
 		
