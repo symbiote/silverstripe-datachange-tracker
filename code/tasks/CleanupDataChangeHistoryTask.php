@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * 
+ *
+ * @author <marcus@silverstripe.com.au>
+ * @license BSD License http://www.silverstripe.org/bsd-license
+ */
+class CleanupDataChangeHistoryTask extends BuildTask {
+	public function run($request) {
+		$confirm = $request->getVar('run') ? true : false;
+		$force = $request->getVar('force') ? true : false;
+		$since = $request->getVar('older');
+		
+		if (!$since) {
+			echo "Please specify an 'older' param with a date older than which to prune (in strtotime friendly format)<br/>\n";
+			return;
+		}
+		
+		$since = strtotime($since);
+		if (!$since) {
+			echo "Please specify an 'older' param with a date older than which to prune (in strtotime friendly format)<br/>\n";
+			return;
+		}
+
+		if ($since > strtotime('-3 months') && !$force) {
+			echo "To cleanup data more recent than 3 months, please supply the 'force' parameter as well as the run parameter, swapping to dry run <br/>\n";
+			$confirm = false;
+		}
+		
+		$since = date('Y-m-d H:i:s', $since);
+		
+		$items = DataChangeRecord::get()->filter('Created:LessThan', $since);
+		
+		echo "Pruning {$items->count()} records older than $since<br/>\n";
+		
+		if ($confirm) {
+			$query = new SQLQuery('*', 'DataChangeRecord', '"Created" < \'' . $since . '\'');
+			$query->setDelete(true);
+			
+			$query->execute();
+		} else {
+			echo "Dry run performed, please supply the run=1 parameter to actually execute the deletion!<br/>\n";
+		}
+	}
+
+}

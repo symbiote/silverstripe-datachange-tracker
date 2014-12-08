@@ -20,6 +20,8 @@ class DataChangeRecord extends DataObject {
 		'Referer'			=> 'Varchar(255)',
 		'RemoteIP'			=> 'Varchar(128)',
 		'Agent'				=> 'Varchar(255)',
+		'GetVars'			=> 'Text',
+		'PostVars'			=> 'Text',
 	);
 
 	private static $has_one = array(
@@ -47,6 +49,17 @@ class DataChangeRecord extends DataObject {
 	);
 	
 	private static $default_sort = 'Created DESC';
+	
+	/**
+	 * Should request variables be saved too?
+	 *
+	 * @var boolean
+	 */
+	private static $save_request_vars = false;
+	
+	private static $field_blacklist = array('Password');
+	
+	private static $request_vars_blacklist = array('url', 'SecurityID');
 
 	public function getCMSFields($params = null) {
 		Requirements::css(DATACHANGE_PATH . '/css/datachange-tracker.css');
@@ -68,6 +81,8 @@ class DataChangeRecord extends DataObject {
 			ToggleCompositeField::create('RawData', 'Raw Data', array(
 				ReadonlyField::create('Before'),
 				ReadonlyField::create('After'),
+				ReadonlyField::create('GetVars'),
+				ReadonlyField::create('PostVars'),
 			))->setStartClosed(false)->addExtraClass('datachange-field')
 		);
 		
@@ -117,6 +132,12 @@ class DataChangeRecord extends DataObject {
 				}
 			}	
 		}
+		
+		foreach (self::config()->field_blacklist as $key) {
+			if (isset($changes[$key])) {
+				unset($changes[$key]);
+			}
+		}
 
 		if ((empty($changes) && $type == 'Change')
 			|| ($type === 'Delete' && Versioned::get_reading_mode() === 'Stage.Live')
@@ -150,6 +171,17 @@ class DataChangeRecord extends DataObject {
 		$record->Before = serialize($before);
 		$record->After = serialize($after);
 		
+		if (self::config()->save_request_vars) {
+			
+			foreach (self::config()->request_vars_blacklist as $key) {
+				unset($_GET[$key]);
+				unset($_POST[$key]);
+			}
+			
+			$record->GetVars = isset($_GET) ? serialize($_GET) : null;
+			$record->PostVars = isset($_POST) ? serialize($_POST) : null;
+		}
+
 		$record->ChangedByID = Member::currentUserID();
 		
 		if (Member::currentUserID() && Member::currentUser()) {
