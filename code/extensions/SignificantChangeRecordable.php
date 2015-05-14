@@ -6,7 +6,7 @@
  * @author stephen@silverstripe.com.au
  * @license BSD License http://silverstripe.org/bsd-license/
  */
-class SigificantChangeRecordable extends DataExtension {
+class SignificantChangeRecordable extends DataExtension {
 
 	private static $ignored_fields = array();
 
@@ -36,7 +36,7 @@ class SigificantChangeRecordable extends DataExtension {
 
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		// Load the sigificant_fields and check to see if they have changed if they have record the current DateTime
+		// Load the significant_fields and check to see if they have changed if they have record the current DateTime
 		$significant = Config::inst()->get($this->owner->Classname, 'significant_fields');
 		
 		$isSignicantChange = $this->owner->isSignificantChange;
@@ -45,7 +45,7 @@ class SigificantChangeRecordable extends DataExtension {
 			$significant = array_combine($significant, $significant);
 			
 			//If the owner object or an extension of it implements getSignificantChange call it instead of testing here
-			if (method_exists($this->owner, 'getSignificantChange') && $this->owner->getSignificantChange()) {
+			if ($this->owner->hasMethod('getSignificantChange') && $this->owner->getSignificantChange()) {
 				//Set LastSignificantChange to now
 				$this->owner->LastSignificantChange = date(DateTime::ATOM);
 			} else {
