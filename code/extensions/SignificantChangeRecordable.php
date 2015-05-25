@@ -20,7 +20,7 @@ class SignificantChangeRecordable extends DataExtension {
 	public function updateCMSFields(FieldList $fields) {
 		$fields->removeByName('LastSignificantChange');
 		$fields->removeByName('ChangeDescription');
-		if (boolval($this->owner->LastSignificantChange)) {
+		if ($this->owner->LastSignificantChange !== NULL) {
 
 				$dateTime = new DateTime($this->owner->LastSignificantChange);
 				//Put these fields on the top of the First Tab's form
