@@ -7,19 +7,14 @@
  */
 class DataChangeTrackService {
 
-	protected static $dcr_cache = array();
-	
-	public static function cache($ID, $classname) {
-		if (isset(self::$dcr_cache["{$ID}-{$classname}"])) {
-			return self::$dcr_cache["{$ID}-{$classname}"]; 
+	protected $dcr_cache = array();
+
+	public function track(DataObject $object, $type = 'Change') {
+
+		if (!isset($this->dcr_cache["{$object->ID}-{$object->Classname}"])) {
+			$this->dcr_cache["{$object->ID}-{$object->Classname}"] = DataChangeRecord::create();
 		}
 		
-		return self::$dcr_cache["{$ID}-{$classname}"] = DataChangeRecord::create();
-	}
-	
-	public static function track(DataObject $object, $type = 'Change') {
-		self::cache($object->ID, $object->Classname);
-		
-		self::$dcr_cache["{$object->ID}-{$object->Classname}"]->track($object, $type);
+		$this->dcr_cache["{$object->ID}-{$object->Classname}"]->track($object, $type);
 	}
 }
