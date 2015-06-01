@@ -22,25 +22,24 @@ class SignificantChangeRecordable extends DataExtension {
 		$fields->removeByName('ChangeDescription');
 		if ($this->owner->LastSignificantChange !== NULL) {
 
-				$dateTime = new DateTime($this->owner->LastSignificantChange);
-				//Put these fields on the top of the First Tab's form
-				$fields->first()->Tabs()->first()->getChildren()->unshift(
-					LabelField::create("infoLastSignificantChange", "<strong>This EP will now appear in Search and EP"
-						. " subscription emails spent out tonight. To stop this click the checkbox and save this EP"
-						. " again.</strong>"
-					)
+			$dateTime = new DateTime($this->owner->LastSignificantChange);
+			//Put these fields on the top of the First Tab's form
+			$fields->first()->Tabs()->first()->getChildren()->unshift(
+				LabelField::create("infoLastSignificantChange", "<strong>Last Significant change was at: "
+					. "{$dateTime->Format('d/m/Y H:i')}</strong>"
+				)
 			);
 			$fields->insertAfter(
-					CheckboxField::create("isSignificantChange",
-							"CLEAR Last Significant change: {$dateTime->Format('d/m/Y H:i')}"
-						)->setDescription(
-							'Check and save this Environment Plan again to clear the Last Significant change date.'
-						)
-					, 'infoLastSignificantChange'
-				);
-				$fields->insertAfter(
+				CheckboxField::create("isSignificantChange",
+						"CLEAR Last Significant change: {$dateTime->Format('d/m/Y H:i')}"
+					)->setDescription(
+						'Check and save this Record again to clear the Last Significant change date.'
+					)
+				, 'infoLastSignificantChange'
+			);
+			$fields->insertAfter(
 				TextField::create('ChangeDescription', 'Description of Changes')
-						->setDescription('This is the next that will appear to emails, to explain what has changed.')
+					->setDescription('This is an automatically generated list of changes to important fields.')
 				, 'isSignificantChange'
 			);
 		}
