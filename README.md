@@ -11,7 +11,7 @@
 
 ## Description
 
-Record and track changes and deletes of any dataobjects. View chages/diffs in model admin.
+Record and track changes and deletes of any dataobjects. View changes/diffs in model admin.
 
 ## Installation
 
@@ -74,3 +74,22 @@ DataChangeRecord:
 
 ```
 
+## Significant Change tracking
+
+Sometimes reporting changes to certain fields to CMS users is desirable (e.g seeing the last time a field was updated).
+This is handled by `SignificantChangeRecordable`, which looks for a list of `significant_fields`.
+
+Example:
+
+```
+TeamMember:
+  significant_fields:
+    - 'Name'
+    - 'Address'
+    - 'OfficeNumber'
+    - 'Position'
+    - 'Mobile'
+  extensions:
+    - 'ChangeRecordable'
+    - 'SignificantChangeRecordable'
+```
