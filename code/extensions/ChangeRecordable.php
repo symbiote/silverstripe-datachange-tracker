@@ -9,15 +9,31 @@
 class ChangeRecordable extends DataExtension {
 	
 	private static $ignored_fields = array();
+	
+	protected $isNewObject = FALSE;
+	protected $changeType = 'Change';
 
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		DataChangeRecord::track($this->owner);
+		if($this->owner->isInDB()) {
+			DataChangeTrackService::track($this->owner, $this->changeType);
+		} else {
+			$this->isNewObject = TRUE;
+			$this->changeType = 'New';
+		}
 	}
-	
+
+	public function onAfterWrite() {
+		parent::onAfterWrite();
+		if($this->isNewObject) {
+			DataChangeTrackService::track($this->owner, $this->changeType);
+			$this->isNewObject = FALSE;
+		}
+	}
+		
 	public function onBeforeDelete() {
 		parent::onBeforeDelete();
-		DataChangeRecord::track($this->owner, 'Delete');
+		DataChangeTrackService::track($this->owner, 'Delete');
 	}
 
 	public function getIgnoredFields(){
