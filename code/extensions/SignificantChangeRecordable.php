@@ -34,7 +34,7 @@ class SignificantChangeRecordable extends DataExtension {
 						"CLEAR Last Significant change: {$dateTime->Format('d/m/Y H:i')}"
 					)->setDescription(
 						'Check and save this Record again to clear the Last Significant change date.'
-					)
+					)->setValue(FALSE)
 				, 'infoLastSignificantChange'
 			);
 			$fields->insertAfter(
@@ -59,20 +59,18 @@ class SignificantChangeRecordable extends DataExtension {
 			if ($this->owner->hasMethod('getSignificantChange') && $this->owner->getSignificantChange()) {
 				//Set LastSignificantChange to now
 				$this->owner->LastSignificantChange = date(DateTime::ATOM);
-				$this->owner->isSignificantChange = true;
 			} else {
 				$changes = $this->owner->getChangedFields(true, 2);
 				//A simple interesect of the keys gives us whether a change has occurred
 				if (count($changes) && count(array_intersect_key($changes, $significant))) {
 					//Set LastSignificantChange to now
 					$this->owner->LastSignificantChange = date(DateTime::ATOM);
-					$this->owner->isSignificantChange = true;
 				}
 			}
 			//If we don't have any significant changes leave the field alone as a previous edit may have been
 			//significant.
 		} else {
-			if($this->owner->isInDB) $this->owner->LastSignificantChange = NULL;
+			if($this->owner->isInDB()) $this->owner->LastSignificantChange = NULL;
 		}
 	}
 

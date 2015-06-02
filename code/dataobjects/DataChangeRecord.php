@@ -172,7 +172,7 @@ class DataChangeRecord extends DataObject {
 			//merge the old array last to keep it's value as we want keep the earliest version of each field
 			$this->Before = serialize(array_replace(unserialize($this->Before), $before));
 		} else {
-			$this->After = serialize($after);
+			$this->Before = serialize($before);
 		}
 		if ($this->After) {
 			//merge the new array last to keep it's value as we want the newest version of each field
