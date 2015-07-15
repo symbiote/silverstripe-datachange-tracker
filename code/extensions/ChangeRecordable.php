@@ -7,17 +7,39 @@
  * @license BSD License http://silverstripe.org/bsd-license/
  */
 class ChangeRecordable extends DataExtension {
+
+    public $dataChangeTrackService;
+
+	public static $dependencies = array(
+        'dataChangeTrackService'        => '%$DataChangeTrackService',
+    );
 	
 	private static $ignored_fields = array();
+	
+	protected $isNewObject = FALSE;
+	protected $changeType = 'Change';
 
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		DataChangeRecord::track($this->owner);
+		if($this->owner->isInDB()) {
+			$this->dataChangeTrackService->track($this->owner, $this->changeType);
+		} else {
+			$this->isNewObject = TRUE;
+			$this->changeType = 'New';
+		}
 	}
-	
+
+	public function onAfterWrite() {
+		parent::onAfterWrite();
+		if($this->isNewObject) {
+			$this->dataChangeTrackService->track($this->owner, $this->changeType);
+			$this->isNewObject = FALSE;
+		}
+	}
+		
 	public function onBeforeDelete() {
 		parent::onBeforeDelete();
-		DataChangeRecord::track($this->owner, 'Delete');
+		$this->dataChangeTrackService->track($this->owner, 'Delete');
 	}
 
 	public function getIgnoredFields(){
