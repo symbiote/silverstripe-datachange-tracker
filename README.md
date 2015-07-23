@@ -93,3 +93,10 @@ TeamMember:
     - 'ChangeRecordable'
     - 'SignificantChangeRecordable'
 ```
+
+## Version details
+
+*3.0.0*
+
+* Removed static DataChangeRecord::track() method
+
