@@ -19,5 +19,10 @@
 	{
 		"silverstripe/framework": "3.*",
 		"composer/installers": "*"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "3.0.x-dev"
+		}
 	}
 }
