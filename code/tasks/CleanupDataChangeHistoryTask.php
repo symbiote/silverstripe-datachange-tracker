@@ -31,11 +31,11 @@ class CleanupDataChangeHistoryTask extends BuildTask {
 		$since = date('Y-m-d H:i:s', $since);
 		
 		$items = DataChangeRecord::get()->filter('Created:LessThan', $since);
+		$max = $items->max('ID');
+		echo "Pruning records older than $since (ID $max)<br/>\n";
 		
-		echo "Pruning {$items->count()} records older than $since<br/>\n";
-		
-		if ($confirm) {
-			$query = new SQLQuery('*', 'DataChangeRecord', '"Created" < \'' . $since . '\'');
+		if ($confirm && $max) {
+			$query = new SQLQuery('*', 'DataChangeRecord', '"ID" < \'' . $max . '\'');
 			$query->setDelete(true);
 			
 			$query->execute();
