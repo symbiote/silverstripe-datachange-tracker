@@ -17,4 +17,8 @@ class DataChangeTrackService {
 		
 		$this->dcr_cache["{$object->ID}-{$object->Classname}"]->track($object, $type);
 	}
+	
+	public function __toString() {
+		return '';
+	}
 }
