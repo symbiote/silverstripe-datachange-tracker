@@ -13,10 +13,6 @@ class ChangeRecordable extends DataExtension {
 	 * @var DataChangeTrackService 
 	 */
     public $dataChangeTrackService;
-
-	public static $dependencies = array(
-        'dataChangeTrackService'        => '%$DataChangeTrackService',
-    );
 	
 	private static $ignored_fields = array();
 	

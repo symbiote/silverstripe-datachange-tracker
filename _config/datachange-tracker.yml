@@ -1,3 +1,6 @@
 Injector:
   DataChangeTrackService:
     class: DataChangeTrackService
+  ChangeRecordable:
+    properties: 
+      dataChangeTrackService: %$DataChangeTrackService
