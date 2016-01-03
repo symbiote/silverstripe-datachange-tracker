@@ -9,11 +9,11 @@
 class SiteTreeChangeRecordable extends ChangeRecordable {
 
 	public function onAfterPublish(&$original) {
-		DataChangeRecord::track($this->owner, 'Publish');
+		$this->dataChangeTrackService->track($this->owner, 'Publish');
 	}
 
 	public function onAfterUnpublish() {
-		DataChangeRecord::track($this->owner, 'Unpublish');
+		$this->dataChangeTrackService->track($this->owner, 'Unpublish');
 	}
 
 	public function updateCMSFields(FieldList $fields) {

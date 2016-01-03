@@ -8,6 +8,10 @@
  */
 class ChangeRecordable extends DataExtension {
 
+	/**
+	 *
+	 * @var DataChangeTrackService 
+	 */
     public $dataChangeTrackService;
 
 	public static $dependencies = array(
