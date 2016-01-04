@@ -171,13 +171,13 @@ class DataChangeRecord extends DataObject {
 			}
 		}
 
-		if($this->Before) {
+		if($this->Before && is_array($before)) {
 			//merge the old array last to keep it's value as we want keep the earliest version of each field
 			$this->Before = json_encode(array_replace(json_decode($this->Before, true), $before));
 		} else {
 			$this->Before = json_encode($before);
 		}
-		if ($this->After) {
+		if ($this->After && is_array($after)) {
 			//merge the new array last to keep it's value as we want the newest version of each field
 			$this->After = json_encode(array_replace($after, json_decode($this->After, true)));
 		} else {
