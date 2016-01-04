@@ -1,8 +1,6 @@
 <?php
 
 /**
- * Description of DataChangeTrackService
- *
  * @author Stephen McMahon <stephen@silverstripe.com.au>
  */
 class DataChangeTrackService {

@@ -87,14 +87,17 @@ class DataChangeRecord extends DataObject {
 		);
 
 		if (strlen($this->Before)) {
-			$before = Object::create($this->ClassType, unserialize($this->Before), true);
-			$after 	= Object::create($this->ClassType, unserialize($this->After), true);
+			$before = Object::create($this->ClassType, json_decode($this->Before, true), true);
+			$after 	= Object::create($this->ClassType, json_decode($this->After, true), true);
 			$diff 	= DataDifferencer::create($before, $after);
 			$diffed = $diff->diffedData();
 			$diffText = '';
 
 			$changedFields = array();
 			foreach ($diffed->toMap() as $field => $prop) {
+				if (is_object($prop)) {
+					continue;
+				}
 				$changedFields[] = $readOnly = ReadonlyField::create('ChangedField' . $field, $field, $prop);
 				$readOnly->dontEscape = true;
 				$readOnly->addExtraClass('datachange-field');
@@ -170,15 +173,15 @@ class DataChangeRecord extends DataObject {
 
 		if($this->Before) {
 			//merge the old array last to keep it's value as we want keep the earliest version of each field
-			$this->Before = serialize(array_replace(unserialize($this->Before), $before));
+			$this->Before = json_encode(array_replace(json_decode($this->Before, true), $before));
 		} else {
-			$this->Before = serialize($before);
+			$this->Before = json_encode($before);
 		}
 		if ($this->After) {
 			//merge the new array last to keep it's value as we want the newest version of each field
-			$this->After = serialize(array_replace($after, unserialize($this->After)));
+			$this->After = json_encode(array_replace($after, json_decode($this->After, true)));
 		} else {
-			$this->After = serialize($after);
+			$this->After = json_encode($after);
 		}
 
 		if (self::config()->save_request_vars) {
@@ -188,8 +191,8 @@ class DataChangeRecord extends DataObject {
 				unset($_POST[$key]);
 			}
 
-			$this->GetVars = isset($_GET) ? serialize($_GET) : null;
-			$this->PostVars = isset($_POST) ? serialize($_POST) : null;
+			$this->GetVars = isset($_GET) ? json_encode($_GET) : null;
+			$this->PostVars = isset($_POST) ? json_encode($_POST) : null;
 		}
 
 		$this->ChangedByID = Member::currentUserID();
