@@ -125,7 +125,7 @@ class DataChangeRecord extends DataObject {
 		$changes = $changedObject->getChangedFields(true, 2);
 		if (count($changes)) {
 			// remove any changes to ignored fields
-			$ignored = $changedObject->getIgnoredFields();
+			$ignored = $changedObject->hasMethod('getIgnoredFields') ? $changedObject->getIgnoredFields() : null;
 			if($ignored){
 				$changes = array_diff_key($changes, $ignored);
 				foreach ($ignored as $ignore) {
