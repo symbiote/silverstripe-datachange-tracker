@@ -142,10 +142,12 @@ class DataChangeRecord extends DataObject {
 			}
 		}
 
-		if ((empty($changes) && $type == 'Change')
-			|| ($type === 'Delete' && Versioned::get_reading_mode() === 'Stage.Live')
-		) {
+		if ((empty($changes) && $type == 'Change')) {
 			return;
+		}
+
+		if ($type === 'Delete' && Versioned::get_reading_mode() === 'Stage.Live') {
+			$type = 'Delete from Live';
 		}
 
 		$this->ChangeType = $type;
