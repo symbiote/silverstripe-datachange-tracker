@@ -49,4 +49,10 @@ class ChangeRecordable extends DataExtension {
 			return array_combine($ignored[$class], $ignored[$class]);
 		}
 	}
+	
+	public function onBeforeVersionedPublish($from, $to) {
+		if($this->owner->isInDB()) {
+			$this->dataChangeTrackService->track($this->owner, 'Publish ' . $from . ' to ' . $to);
+		}
+	}
 }
