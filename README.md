@@ -7,7 +7,6 @@
 ## Maintainers
 
 * marcus@silverstripe.com.au
-* shea@silverstripe.com.au
 
 ## Description
 
