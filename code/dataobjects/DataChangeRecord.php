@@ -111,6 +111,21 @@ class DataChangeRecord extends DataObject {
 			);
 		}
 
+		// Flags fields that cannot be rendered with 'forTemplate'. This prevents bugs where
+		// WorkflowService (of AdvancedWorkflow Module) and BlockManager (of Sheadawson/blocks module) get put
+		// into a field and break the page.
+		$fieldsToRemove = array();
+		foreach ($fields->dataFields() as $field)
+		{
+			$value = $field->Value();
+			if ($value && is_object($value))
+			{
+				if (($value instanceof Object && !$value->hasMethod('forTemplate')) || !method_exists($value, 'forTemplate')) {
+					$field->setValue('[Missing '.get_class($value).'::forTemplate]');
+				}
+			}
+		}
+
 		$fields = $fields->makeReadonly();
 
 		return $fields;
