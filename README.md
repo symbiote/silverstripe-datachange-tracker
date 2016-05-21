@@ -93,7 +93,19 @@ TeamMember:
     - 'SignificantChangeRecordable'
 ```
 
+## Pruning old data
+
+Over time, the data recorded will become overwhelming in size. May not be a problem for you, but if it is
+you can regularly prune it to retain just (N) months of data at a time. Simply create the `PruneChangesBeforeJob`
+from the QueuedJob admin section of the CMS, using a constructor param of something like "-6 months". 
+
+The job will restart itself to run each night, to consistently remove the past 6 months of data. 
+
 ## Version details
+
+*3.2.0*
+
+* Added pruning of data via queuedjobs
 
 *3.0.0*
 
