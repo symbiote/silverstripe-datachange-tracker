@@ -12,6 +12,8 @@
 
 Record and track changes and deletes of any dataobjects. View changes/diffs in model admin.
 
+Additionally, track add/remove of items in many\_many relationships
+
 ## Installation
 
 Install via composer, run dev/build
@@ -29,6 +31,32 @@ MyDataObject:
 ```
 
 If you are applying the extension to the SiteTree, use the SiteTreeChangeRecordable extension to record publish/unpublish actions
+
+To track changes to many\_many relationships, you must use a custom 
+ManyManyRelationship class, as well as indicate which relationships need 
+tracking. This can be directly configured via the Injector
+
+For example
+
+```
+Injector:
+  ManyManyList:
+    class: TrackedManyManyList
+    properties:
+      trackedRelationships:
+        - Page_Regions
+
+```
+
+will track the "Regions" relationship defined on the Page class;
+
+```
+private static $many_many = array(
+	'Regions'	=> 'SomeObject',
+);
+
+```
+
 
 
 ## Capturing URL parameters
