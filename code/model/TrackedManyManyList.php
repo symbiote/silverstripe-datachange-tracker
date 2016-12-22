@@ -34,6 +34,10 @@ class TrackedManyManyList extends ManyManyList
             if (class_exists($addingToClass)) {
                 $onItem = $addingToClass::get()->byID($addingTo);
                 if ($onItem) {
+                    if ($item && !$item instanceof DataObject) {
+                        $class = $this->dataClass;
+                        $item = $class::get()->byID($item);
+                    }
                     $join = $type == 'add' ? ' to ' : ' from ';
                     $type = ucfirst($type) . ' "' . $item->Title . '"' . $join . $parts[1];
                     $onItem->RelatedItem = $item->ClassName . ' #' . $item->ID;
