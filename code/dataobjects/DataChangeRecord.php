@@ -48,7 +48,7 @@ class DataChangeRecord extends DataObject {
 		'ClassID_Type' => '("ClassID","ClassType")',
 	);
 
-	private static $default_sort = 'Created DESC';
+	private static $default_sort = 'ID DESC';
 
 	/**
 	 * Should request variables be saved too?
