@@ -1,5 +1,5 @@
 {
-	"name": "silverstripe-australia/datachange-tracker",
+	"name": "symbiote/silverstripe-datachange-tracker",
 	"description": "Record and track changes to any dataobjects. View chages/diffs in model admin.",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "data", "tracker"],
@@ -18,7 +18,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "3.3.x-dev"
+			"dev-master": "4.0.x-dev"
 		}
 	},
 	"replace": {
