@@ -18,7 +18,7 @@ Additionally, track add/remove of items in many\_many relationships
 
 Install via composer, run dev/build
 	
-	composer require silverstripe-australia/datachange-tracker
+	composer require symbiote/silverstripe-datachange-tracker
 
 ## Usage
 

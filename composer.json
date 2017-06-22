@@ -3,7 +3,7 @@
 	"description": "Record and track changes to any dataobjects. View chages/diffs in model admin.",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "data", "tracker"],
-	"homepage": "http://github.com/silverstripe-australia/datachange-tracker",
+	"homepage": "http://github.com/symbiote/silverstripe-datachange-tracker",
 	"authors": [
 	{
 		"name": "Marcus Nyeholt",
