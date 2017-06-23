@@ -3,7 +3,7 @@
 /**
  * Record a change to a dataobject; use this to track data changes of objects
  *
- * @author marcus@silverstripe.com.au
+ * @author marcus@symbiote.com.au
  * @license BSD License http://silverstripe.org/bsd-license/
  */
 class DataChangeRecord extends DataObject {

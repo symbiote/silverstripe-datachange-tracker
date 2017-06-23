@@ -3,7 +3,7 @@
 /**
  * Add to classes you want to track specfic changes on
  *
- * @author stephen@silverstripe.com.au
+ * @author stephen@symbiote.com.au
  * @license BSD License http://silverstripe.org/bsd-license/
  */
 class SignificantChangeRecordable extends DataExtension {

@@ -6,7 +6,7 @@
 
 ## Maintainers
 
-* marcus@silverstripe.com.au
+* marcus@symbiote.com.au
 
 ## Description
 

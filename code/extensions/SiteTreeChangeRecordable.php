@@ -3,7 +3,7 @@
 /**
  * Add to Pages you want changes recorded for
  *
- * @author stephen@silverstripe.com.au
+ * @author stephen@symbiote.com.au
  * @license BSD License http://silverstripe.org/bsd-license/
  */
 class SiteTreeChangeRecordable extends ChangeRecordable {
