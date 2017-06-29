@@ -22,6 +22,7 @@
 		}
 	},
 	"replace": {
-		"sheadawson/silverstripe-datachange-tracker": "self.version"
+		"sheadawson/silverstripe-datachange-tracker": "self.version",
+		"silverstripe-australia/datachange-tracker": "self.version"
 	}
 }
