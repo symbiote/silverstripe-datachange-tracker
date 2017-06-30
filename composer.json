@@ -17,6 +17,7 @@
 		"composer/installers": "*"
 	},
 	"extra": {
+		"installer-name": "datachange-tracker",
 		"branch-alias": {
 			"dev-master": "3.3.x-dev"
 		}
