@@ -56,7 +56,7 @@ class PruneChangesBeforeJob extends AbstractQueuedJob
         $this->currentStep = 1;
         $this->isComplete = true;
         
-        singleton(QueuedJobService)->queueJob($job, $next);
+        singleton('QueuedJobService')->queueJob($job, $next);
     }
 }
 
