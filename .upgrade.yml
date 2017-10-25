@@ -1,0 +1,11 @@
+mappings:
+  DataChangeRecord: Symbiote\DataChange\Model\DataChangeRecord
+  PruneChangesBeforeJob: Symbiote\DataChange\Job\PruneChangesBeforeJob
+  ChangeRecordable: Symbiote\DataChange\Extension\ChangeRecordable
+  SignificantChangeRecordable: Symbiote\DataChange\Extension\SignificantChangeRecordable
+  SiteTreeChangeRecordable: Symbiote\DataChange\Extension\SiteTreeChangeRecordable
+  DataChangeAdmin: Symbiote\DataChange\Admin\DataChangeAdmin
+  TrackedManyManyList: Symbiote\DataChange\Model\TrackedManyManyList
+  DataChangeTrackService: Symbiote\DataChange\Service\DataChangeTrackService
+  DataChangeConvertJsonTask: Symbiote\DataChange\Job\DataChangeConvertJsonTask
+  CleanupDataChangeHistoryTask: Symbiote\DataChange\Job\CleanupDataChangeHistoryTask

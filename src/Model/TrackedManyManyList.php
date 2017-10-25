@@ -1,5 +1,10 @@
 <?php
 
+namespace Symbiote\DataChange\Model;
+
+use SilverStripe\ORM\ManyManyList;
+use SilverStripe\ORM\DataObject;
+
 /**
  * A replacement manymany list that tracks add and remove calls
  *
@@ -21,14 +26,20 @@ class TrackedManyManyList extends ManyManyList
         return parent::remove($item);
     }
     
-    protected function recordManyManyChange($type, $item) {
+    protected function recordManyManyChange($type, $item)
+    {
         $joinName = $this->getJoinTable();
         if (!in_array($joinName, $this->trackedRelationships)) {
             return;
         }
         $parts = explode('_', $joinName);
         if (isset($parts[0]) && count($parts) > 1) {
-            $addingToClass = $parts[0];
+
+            // table name could be sometihng like Symbiote_DataChange_Tests_TestObject_Kids
+            // which is ClassName_RelName, with
+            array_pop($parts);
+
+            $addingToClass = implode('\\', $parts);
             $addingTo = $this->getForeignID();
             
             if (class_exists($addingToClass)) {

@@ -1,29 +1,38 @@
 {
-	"name": "symbiote/silverstripe-datachange-tracker",
-	"description": "Record and track changes to any dataobjects. View chages/diffs in model admin.",
-	"type": "silverstripe-module",
-	"keywords": ["silverstripe", "data", "tracker"],
-	"homepage": "http://github.com/symbiote/silverstripe-datachange-tracker",
-	"authors": [
-	{
-		"name": "Marcus Nyeholt",
-		"email": "marcus@symbiote.com.au"
-	}
-	],
+    "name": "symbiote/silverstripe-datachange-tracker",
+    "description": "Record and track changes to any dataobjects. View chages/diffs in model admin.",
+    "type": "silverstripe-vendormodule",
+    "keywords": ["silverstripe", "data", "tracker"],
+    "homepage": "http://github.com/symbiote/silverstripe-datachange-tracker",
+    "authors": [
+        {
+            "name": "Marcus Nyeholt",
+            "email": "marcus@symbiote.com.au"
+        }
+    ],
 
-	"require":
-	{
-		"silverstripe/framework": "3.*",
-		"composer/installers": "*"
-	},
-	"extra": {
-		"installer-name": "datachange-tracker",
-		"branch-alias": {
-			"dev-master": "4.0.x-dev"
-		}
-	},
-	"replace": {
-		"sheadawson/silverstripe-datachange-tracker": "self.version",
-		"silverstripe-australia/datachange-tracker": "self.version"
-	}
+    "require": {
+        "silverstripe/framework": "~4.0"
+    },
+    "extra": {
+        "expose": [
+            "client"
+        ],
+        "installer-name": "datachange-tracker",
+        "branch-alias": {
+            "dev-master": "5.0.x-dev"
+        }
+    },
+    "replace": {
+        "sheadawson/silverstripe-datachange-tracker": "self.version",
+        "silverstripe-australia/datachange-tracker": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Symbiote\\DataChange\\": "src/",
+            "Symbiote\\DataChange\\Tests\\": "tests/"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
 }
