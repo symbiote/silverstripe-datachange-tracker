@@ -23,7 +23,7 @@ class DataChangeTrackService
             return;
         }
 
-        if (!isset($this->dcr_cache["{$object->ID}-{$object->Classname}"])) {
+        if (!isset($this->dcr_cache["{$object->ID}-{$object->Classname}-$type"])) {
             $this->dcr_cache["{$object->ID}-{$object->Classname}"] = DataChangeRecord::create();
         }
         
