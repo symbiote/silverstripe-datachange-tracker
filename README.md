@@ -1,5 +1,12 @@
 # Data Change Tracker
 
+[![Build Status](https://travis-ci.org/symbiote/silverstripe-datachange-tracker.svg?branch=master)](https://travis-ci.org/symbiote/silverstripe-datachange-tracker)
+[![Latest Stable Version](https://poser.pugx.org/symbiote/silverstripe-datachange-tracker/version.svg)](https://github.com/symbiote/silverstripe-datachange-tracker/releases)
+[![Latest Unstable Version](https://poser.pugx.org/symbiote/silverstripe-datachange-tracker/v/unstable.svg)](https://packagist.org/packages/symbiote/silverstripe-datachange-tracker)
+[![Total Downloads](https://poser.pugx.org/symbiote/silverstripe-datachange-tracker/downloads.svg)](https://packagist.org/packages/symbiote/silverstripe-datachange-tracker)
+[![License](https://poser.pugx.org/symbiote/silverstripe-datachange-tracker/license.svg)](https://github.com/symbiote/silverstripe-datachange-tracker/blob/master/LICENSE.md)
+
+Compatible with SilverStripe 4
 
 ## Maintainers
 
@@ -13,7 +20,7 @@ Additionally, track add/remove of items in many\_many relationships
 
 ## Installation
 
-## Composer Install
+Composer Install
 
 ```
 composer require symbiote/silverstripe-datachange-tracker:~5.0
