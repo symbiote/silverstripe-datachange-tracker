@@ -1,6 +1,6 @@
 Injector:
   DataChangeTrackService:
-    class: DataChangeTrackService
+    class: \Symbiote\DataChange\Service\DataChangeTrackService
   ChangeRecordable:
     properties: 
       dataChangeTrackService: %$DataChangeTrackService
