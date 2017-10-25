@@ -6,7 +6,7 @@ use DateTime;
 
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\LabelField;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Core\Config\Config;
@@ -25,7 +25,7 @@ class SignificantChangeRecordable extends DataExtension
     private static $significant_fields = array();
 
     private static $db = array(
-        'LastSignificantChange' => 'SS_Datetime',
+        'LastSignificantChange' => 'DBDatetime',
         'ChangeDescription' => 'Text'
     );
 
@@ -37,11 +37,11 @@ class SignificantChangeRecordable extends DataExtension
             $dateTime = new DateTime($this->owner->LastSignificantChange);
             //Put these fields on the top of the First Tab's form
             $fields->first()->Tabs()->first()->getChildren()->unshift(
-                LabelField::create(
+                LiteralField::create(
                     "infoLastSignificantChange",
                     "<strong>Last Significant change was at: "
                     . "{$dateTime->Format('d/m/Y H:i')}</strong>"
-                )
+                )->setAllowHTML(true)
             );
             $fields->insertAfter(
                 CheckboxField::create(

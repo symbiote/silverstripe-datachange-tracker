@@ -21,103 +21,93 @@ use SilverStripe\Control\Director;
  */
 class DataChangeRecord extends DataObject
 {
-    private static $db = array(
-    'ChangeType'        => 'Varchar',
-    'ClassType'            => 'Varchar',
-    'ClassID'            => 'Int',
-    'ObjectTitle'        => 'Varchar(255)',
-    'Before'            => 'Text',
-    'After'                => 'Text',
-    'Stage'                => 'Text',
-    'CurrentEmail'        => 'Text',
-    'CurrentURL'        => 'Varchar(255)',
-    'Referer'            => 'Varchar(255)',
-    'RemoteIP'            => 'Varchar(128)',
-    'Agent'                => 'Varchar(255)',
-    'GetVars'            => 'Text',
-    'PostVars'            => 'Text',
-    );
-
+    private static $table_name = 'DataChangeRecord';
+    private static $db = [
+        'ChangeType' => 'Varchar',
+        'ObjectTitle' => 'Varchar(255)',
+        'Before' => 'Text',
+        'After' => 'Text',
+        'Stage' => 'Text',
+        'CurrentEmail' => 'Text',
+        'CurrentURL' => 'Varchar(255)',
+        'Referer' => 'Varchar(255)',
+        'RemoteIP' => 'Varchar(128)',
+        'Agent' => 'Varchar(255)',
+        'GetVars' => 'Text',
+        'PostVars' => 'Text',
+    ];
     private static $has_one = array(
-    'ChangedBy'            => 'Member',
+        'ChangedBy' => 'SilverStripe\Security\Member',
+        'ChangeRecord' => 'SilverStripe\ORM\DataObject',
     );
-
-    private static $summary_fields = array(
-    'ChangeType'        => 'Change Type',
-    'ClassType'             => 'Record Class',
-    'ClassID'             => 'Record ID',
-    'ObjectTitle'        => 'Record Title',
-    'ChangedBy.Title'     => 'User',
-    'Created'            => 'Modification Date',
+    private static $summary_fields    = array(
+        'ChangeType' => 'Change Type',
+        'ChangeRecordClass' => 'Record Class',
+        'ChangeRecordID' => 'Record ID',
+        'ObjectTitle' => 'Record Title',
+        'ChangedBy.Title' => 'User',
+        'Created' => 'Modification Date',
     );
-
     private static $searchable_fields = array(
-    'ChangeType',
-    'ObjectTitle',
-    'ClassType',
-    'ClassID',
+        'ChangeType',
+        'ObjectTitle',
+        'ChangeRecordClass',
+        'ChangeRecordID',
     );
-
-    private static $indexes = array(
-    'ClassID_Type' => '("ClassID","ClassType")',
-    );
-
-    private static $default_sort = 'ID DESC';
+    private static $default_sort      = 'ID DESC';
 
     /**
      * Should request variables be saved too?
      *
      * @var boolean
      */
-    private static $save_request_vars = false;
-
-    private static $field_blacklist = array('Password');
-
+    private static $save_request_vars      = false;
+    private static $field_blacklist        = array('Password');
     private static $request_vars_blacklist = array('url', 'SecurityID');
 
     public function getCMSFields($params = null)
     {
-        Requirements::css(DATACHANGE_PATH . '/css/datachange-tracker.css');
+        Requirements::css('symbiote/silverstripe-datachange-tracker: client/css/datachange-tracker.css');
 
         $fields = FieldList::create(
             ToggleCompositeField::create(
                 'Details',
                 'Details',
                 array(
-                ReadonlyField::create('ChangeType', 'Type of change'),
-                ReadonlyField::create('ClassType', 'Record Class'),
-                ReadonlyField::create('ClassID', 'Record ID'),
-                ReadonlyField::create('ObjectTitle', 'Record Title'),
-                ReadonlyField::create('Created', 'Modification Date'),
-                ReadonlyField::create('Stage', 'Stage'),
-                ReadonlyField::create('User', 'User', $this->getMemberDetails()),
-                ReadonlyField::create('CurrentURL', 'URL'),
-                ReadonlyField::create('Referer', 'Referer'),
-                ReadonlyField::create('RemoteIP', 'Remote IP'),
-                ReadonlyField::create('Agent', 'Agent'),
-                )
+                    ReadonlyField::create('ChangeType', 'Type of change'),
+                    ReadonlyField::create('ChangeRecordClass', 'Record Class'),
+                    ReadonlyField::create('ChangeRecordID', 'Record ID'),
+                    ReadonlyField::create('ObjectTitle', 'Record Title'),
+                    ReadonlyField::create('Created', 'Modification Date'),
+                    ReadonlyField::create('Stage', 'Stage'),
+                    ReadonlyField::create('User', 'User', $this->getMemberDetails()),
+                    ReadonlyField::create('CurrentURL', 'URL'),
+                    ReadonlyField::create('Referer', 'Referer'),
+                    ReadonlyField::create('RemoteIP', 'Remote IP'),
+                    ReadonlyField::create('Agent', 'Agent'),
+                    )
             )->setStartClosed(false)->addExtraClass('datachange-field'),
             ToggleCompositeField::create(
                 'RawData',
                 'Raw Data',
                 array(
-                ReadonlyField::create('Before'),
-                ReadonlyField::create('After'),
-                ReadonlyField::create('GetVars'),
-                ReadonlyField::create('PostVars'),
-                )
+                    ReadonlyField::create('Before'),
+                    ReadonlyField::create('After'),
+                    ReadonlyField::create('GetVars'),
+                    ReadonlyField::create('PostVars'),
+                    )
             )->setStartClosed(false)->addExtraClass('datachange-field')
         );
 
-        if (strlen($this->Before)) {
-            $before = Injector::inst()->create($this->ClassType, json_decode($this->Before, true), true);
-            $after = Injector::inst()->create($this->ClassType, json_decode($this->After, true), true);
-            $diff     = DataDifferencer::create($before, $after);
-            
+        if (strlen($this->Before) && strlen($this->ChangeRecordClass) && class_exists($this->ChangeRecordClass)) {
+            $before = Injector::inst()->create($this->ChangeRecordClass, json_decode($this->Before, true), true);
+            $after  = Injector::inst()->create($this->ChangeRecordClass, json_decode($this->After, true), true);
+            $diff   = DataDifferencer::create($before, $after);
+
             // The solr search service injector dependency causes issues with comparison, since it has public variables that are stored in an array.
-            
+
             $diff->ignoreFields(array('searchService'));
-            $diffed = $diff->diffedData();
+            $diffed   = $diff->diffedData();
             $diffText = '';
 
             $changedFields = array();
@@ -125,15 +115,21 @@ class DataChangeRecord extends DataObject
                 if (is_object($prop)) {
                     continue;
                 }
-                $changedFields[] = $readOnly = ReadonlyField::create('ChangedField' . $field, $field, $prop);
-                $readOnly->dontEscape = true;
+                if (is_array($prop)) {
+                    $prop = json_encode($prop);
+                }
+                $changedFields[] = $readOnly        = \SilverStripe\Forms\ReadonlyField::create(
+                    'ChangedField'.$field,
+                    $field,
+                    $prop
+                );
                 $readOnly->addExtraClass('datachange-field');
             }
 
             $fields->insertBefore(
                 ToggleCompositeField::create('FieldChanges', 'Changed Fields', $changedFields)
-                ->setStartClosed(false)
-                ->addExtraClass('datachange-field'),
+                    ->setStartClosed(false)
+                    ->addExtraClass('datachange-field'),
                 'RawData'
             );
         }
@@ -145,7 +141,10 @@ class DataChangeRecord extends DataObject
         foreach ($fields->dataFields() as $field) {
             $value = $field->Value();
             if ($value && is_object($value)) {
-                if ((method_exists($value, 'hasMethod') && !$value->hasMethod('forTemplate')) || !method_exists($value, 'forTemplate')) {
+                if ((method_exists($value, 'hasMethod') && !$value->hasMethod('forTemplate')) || !method_exists(
+                    $value,
+                    'forTemplate'
+                )) {
                     $field->setValue('[Missing '.get_class($value).'::forTemplate]');
                 }
             }
@@ -156,12 +155,11 @@ class DataChangeRecord extends DataObject
         return $fields;
     }
 
-
     /**
      * Track a change to a DataObject
      *
      * @return DataChangeRecord
-     **/
+     * */
     public function track(DataObject $changedObject, $type = 'Change')
     {
         $changes = $changedObject->getChangedFields(true, 2);
@@ -193,25 +191,26 @@ class DataChangeRecord extends DataObject
         }
 
         $this->ChangeType = $type;
-        $this->ClassType = $changedObject->ClassName;
-        $this->ClassID = $changedObject->ID;
+
+        $this->ChangeRecordClass = $changedObject->ClassName;
+        $this->ChangeRecordID    = $changedObject->ID;
         // @TODO this will cause issue for objects without titles
-        $this->ObjectTitle = $changedObject->Title;
-        $this->Stage = Versioned::get_reading_mode();
+        $this->ObjectTitle       = $changedObject->Title;
+        $this->Stage             = Versioned::get_reading_mode();
 
         $before = array();
-        $after = array();
+        $after  = array();
 
         if ($type != 'Change' && $type != 'New') { // If we are (un)publishing we want to store the entire object
             $before = ($type === 'Unpublish') ? $changedObject->toMap() : null;
-            $after = ($type === 'Publish') ? $changedObject->toMap() : null;
+            $after  = ($type === 'Publish') ? $changedObject->toMap() : null;
         } else { // Else we're tracking the changes to the object
             foreach ($changes as $field => $change) {
                 if ($field == 'SecurityID') {
                     continue;
                 }
                 $before[$field] = $change['before'];
-                $after[$field] = $change['after'];
+                $after[$field]  = $change['after'];
             }
         }
 
@@ -234,7 +233,7 @@ class DataChangeRecord extends DataObject
                 unset($_POST[$key]);
             }
 
-            $this->GetVars = isset($_GET) ? json_encode($_GET) : null;
+            $this->GetVars  = isset($_GET) ? json_encode($_GET) : null;
             $this->PostVars = isset($_POST) ? json_encode($_POST) : null;
         }
 
@@ -247,8 +246,9 @@ class DataChangeRecord extends DataObject
         if (isset($_SERVER['SERVER_NAME'])) {
             $protocol = 'http';
             $protocol = isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on" ? 'https://' : 'http://';
+            $port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : '80';
 
-            $this->CurrentURL = $protocol . $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+            $this->CurrentURL = $protocol.$_SERVER["SERVER_NAME"].":".$port.$_SERVER["REQUEST_URI"];
         } elseif (Director::is_cli()) {
             $this->CurrentURL = 'CLI';
         } else {
@@ -256,37 +256,34 @@ class DataChangeRecord extends DataObject
         }
 
         $this->RemoteIP = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : (Director::is_cli() ? 'CLI' : 'Unknown remote addr');
-        $this->Referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-        $this->Agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $this->Referer  = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+        $this->Agent    = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 
         $this->write();
         return $this;
     }
 
-
     /**
      * @return boolean
-     **/
+     * */
     public function canDelete($member = null)
     {
         return false;
     }
 
-
     /**
      * @return string
-     **/
+     * */
     public function getTitle()
     {
-        return $this->ClassType . ' #' . $this->ClassID;
+        return $this->ChangeRecordClass.' #'.$this->ChangeRecordID;
     }
-
 
     /**
      * Return a description/summary of the user
      *
      * @return string
-     **/
+     * */
     public function getMemberDetails()
     {
         if ($user = $this->ChangedBy()) {

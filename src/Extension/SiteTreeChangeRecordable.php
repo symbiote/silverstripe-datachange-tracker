@@ -2,6 +2,7 @@
 
 namespace Symbiote\DataChange\Extension;
 
+use Symbiote\DataChange\Model\DataChangeRecord;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Security\Permission;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordViewer;
@@ -30,17 +31,21 @@ class SiteTreeChangeRecordable extends ChangeRecordable
     {
         if (Permission::check('CMS_ACCESS_DataChangeAdmin')) {
             //Get all data changes relating to this page filter them by publish/unpublish
-            $dataChanges = DataChangeRecord::get()->filter('ClassID', $this->owner->ID)->exclude('ChangeType', 'Change');
+            $dataChanges = DataChangeRecord::get()->filter([
+                    'ChangeRecordID' => $this->owner->ID,
+                    'ChangeRecordClass' => $this->owner->ClassName
+                ])->exclude('ChangeType', 'Change');
+
             //create a gridfield out of them
             $gridFieldConfig = GridFieldConfig_RecordViewer::create();
-            $publishedGrid = new GridField('PublishStates', 'Published States', $dataChanges, $gridFieldConfig);
-            $dataColumns = $publishedGrid->getConfig()->getComponentByType('GridFieldDataColumns');
+            $publishedGrid   = new GridField('PublishStates', 'Published States', $dataChanges, $gridFieldConfig);
+            $dataColumns     = $publishedGrid->getConfig()->getComponentByType('SilverStripe\Forms\GridField\GridFieldDataColumns');
             $dataColumns->setDisplayFields(
-                array('ChangeType'            => 'Change Type',
-                                                    'ObjectTitle'        => 'Page Title',
-                                                    'ChangedBy.Title'     => 'User',
-                                                    'Created'            => 'Modification Date',
-                            )
+                array('ChangeType' => 'Change Type',
+                    'ObjectTitle' => 'Page Title',
+                    'ChangedBy.Title' => 'User',
+                    'Created' => 'Modification Date',
+                )
             );
 
             //linking through to the datachanges modeladmin

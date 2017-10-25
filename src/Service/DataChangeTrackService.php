@@ -2,7 +2,7 @@
 
 namespace Symbiote\DataChange\Service;
 
-use Symbiote\DataChange\DataChangeRecord;
+use Symbiote\DataChange\Model\DataChangeRecord;
 
 use SilverStripe\ORM\DataObject;
 
@@ -29,7 +29,11 @@ class DataChangeTrackService
         
         $this->dcr_cache["{$object->ID}-{$object->Classname}"]->track($object, $type);
     }
-    
+
+    public function resetChangeCache() {
+        $this->dcr_cache = [];
+    }
+
     public function __toString()
     {
         return '';

@@ -34,7 +34,12 @@ class TrackedManyManyList extends ManyManyList
         }
         $parts = explode('_', $joinName);
         if (isset($parts[0]) && count($parts) > 1) {
-            $addingToClass = $parts[0];
+
+            // table name could be sometihng like Symbiote_DataChange_Tests_TestObject_Kids
+            // which is ClassName_RelName, with
+            array_pop($parts);
+
+            $addingToClass = implode('\\', $parts);
             $addingTo = $this->getForeignID();
             
             if (class_exists($addingToClass)) {

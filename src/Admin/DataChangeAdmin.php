@@ -11,7 +11,7 @@ use SilverStripe\Admin\ModelAdmin;
 class DataChangeAdmin extends ModelAdmin
 {
     private static $managed_models = array(
-    'DataChangeRecord',
+        'Symbiote\DataChange\Model\DataChangeRecord',
     );
 
     private static $url_segment = 'datachanges';

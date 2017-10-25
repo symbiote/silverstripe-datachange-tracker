@@ -1,6 +1,12 @@
-Injector:
+---
+Name: datachange_injector_config
+---
+SilverStripe\Core\Injector\Injector:
   DataChangeTrackService:
     class: \Symbiote\DataChange\Service\DataChangeTrackService
-  ChangeRecordable:
+  Symbiote\DataChange\Extension\ChangeRecordable:
+    properties: 
+      dataChangeTrackService: %$DataChangeTrackService
+  Symbiote\DataChange\Extension\SiteTreeChangeRecordable:
     properties: 
       dataChangeTrackService: %$DataChangeTrackService

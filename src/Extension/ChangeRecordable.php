@@ -2,6 +2,8 @@
 
 namespace Symbiote\DataChange\Extension;
 
+use Symbiote\DataChange\Model\DataChangeRecord;
+
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Core\Config\Config;
 
@@ -25,6 +27,11 @@ class ChangeRecordable extends DataExtension
     protected $isNewObject = false;
     protected $changeType = 'Change';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
@@ -44,7 +51,7 @@ class ChangeRecordable extends DataExtension
             $this->isNewObject = false;
         }
     }
-        
+
     public function onBeforeDelete()
     {
         parent::onBeforeDelete();
@@ -65,5 +72,17 @@ class ChangeRecordable extends DataExtension
         if ($this->owner->isInDB()) {
             $this->dataChangeTrackService->track($this->owner, 'Publish ' . $from . ' to ' . $to);
         }
+    }
+
+    /**
+     * Get the list of data changes for this item
+     *
+     * @return \SilverStripe\ORM\DataList
+     */
+    public function getDataChangesList() {
+        return DataChangeRecord::get()->filter([
+            'ChangeRecordID' => $this->owner->ID,
+            'ChangeRecordClass' => $this->owner->ClassName
+        ]);
     }
 }
