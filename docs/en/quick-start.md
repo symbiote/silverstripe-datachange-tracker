@@ -104,4 +104,4 @@ Over time, the data recorded will become overwhelming in size. May not be a prob
 you can regularly prune it to retain just (N) months of data at a time. Simply create the `PruneChangesBeforeJob`
 from the QueuedJob admin section of the CMS, using a constructor param of something like "-6 months". 
 
-The job will restart itself to run each night, to consistently remove the past 6 months of data. 
+The job will restart itself to run each night, to consistently remove anything older than six months.    
