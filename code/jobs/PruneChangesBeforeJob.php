@@ -41,13 +41,11 @@ class PruneChangesBeforeJob extends AbstractQueuedJob
     }
     
     public function process() {
-        if ($this->totalSteps <= 0) {
-            $items = DataChangeRecord::get()->filter('Created:LessThan', $this->pruneBefore);
-            $max = $items->max('ID');
-            
-            $query = new SQLDelete('DataChangeRecord', '"ID" < \'' . $max . '\'');
-            $query->execute();
-        }
+        $items = DataChangeRecord::get()->filter('Created:LessThan', $this->pruneBefore);
+        $max = $items->max('ID');
+        
+        $query = new SQLDelete('DataChangeRecord', '"ID" < \'' . $max . '\'');
+        $query->execute();
         
         $job = new PruneChangesBeforeJob($this->priorTo);
 
