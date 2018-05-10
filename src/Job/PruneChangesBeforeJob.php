@@ -2,11 +2,13 @@
 
 namespace Symbiote\DataChange\Job;
 
-use Symbiote\DataChange\DataChangeRecord;
-
 use SilverStripe\ORM\Queries\SQLDelete;
+use SilverStripe\Core\Injector\Injector;
+use Symbiote\QueuedJobs\Services\QueuedJobService;
+use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
+use Symbiote\DataChange\Model\DataChangeRecord;
 
-if (class_exists('AbstractQueuedJob')) {
+if (class_exists(AbstractQueuedJob::class)) {
     
     /**
      * A scheduled regular prune of _old_ data change records
@@ -18,49 +20,50 @@ if (class_exists('AbstractQueuedJob')) {
     
         public function __construct($priorTo = null)
         {
+            $ts = 0;
             if ($priorTo) {
                 $ts = strtotime($priorTo);
-                if ($ts <= 0) {
-                    $ts = time() - 90*86400;
-                }
-                $this->priorTo = $priorTo;
-                $this->pruneBefore = date('Y-m-d 00:00:00', $ts);
-                $this->totalSteps = DataChangeRecord::get()->filter('Created:LessThan', $this->pruneBefore)->count();
             }
+            if ($ts <= 0) {
+                $ts = time() - 90*86400;
+            }
+            $this->priorTo = $priorTo;
+            $this->pruneBefore = date('Y-m-d 00:00:00', $ts);
+            // NOTE(Jake): 2018-05-08
+            //
+            // Change steps to 1 as it's technically doing 
+            // this in 1 step now, this is to avoid an issue where 
+            // totalSteps=0 can occur and the job won't requeue itself.
+            // (When using ->count() off the DataList)
+            //
+            $this->totalSteps = 1;
         }
-    
+        
         public function getSignature()
         {
             return md5($this->pruneBefore);
         }
-    
+        
         public function getTitle()
         {
             return "Prune data change track entries before " . $this->pruneBefore;
         }
-    
-        public function setup()
-        {
-            $this->pruneIds = DataChangeRecord::get()->filter('Created:LessThan', $this->pruneBefore)->column();
-            $this->totalSteps = count($this->pruneIds);
-        }
-    
-        public function process()
-        {
+        
+        public function process() {
             $items = DataChangeRecord::get()->filter('Created:LessThan', $this->pruneBefore);
             $max = $items->max('ID');
-        
+            
             $query = new SQLDelete('DataChangeRecord', '"ID" < \'' . $max . '\'');
             $query->execute();
-        
+            
             $job = new PruneChangesBeforeJob($this->priorTo);
-        
+
             $next = date('Y-m-d 03:00:00', strtotime('tomorrow'));
-        
-            $this->currentStep = $this->totalSteps;
+            
+            $this->currentStep = 1;
             $this->isComplete = true;
-        
-            singleton('QueuedJobService')->queueJob($job, $next);
+            
+            Injector::inst()->get(QueuedJobService::class)->queueJob($job, $next);
         }
     }
 
