@@ -10,9 +10,9 @@ use SilverStripe\Dev\TestOnly;
  *
  * @author marcus
  */
-class TestTrackedChild extends DataObject implements TestOnly
+class TestTrackedUnderscoreChild extends DataObject implements TestOnly
 {
-    private static $table_name = 'TestTrackedChild';
+    private static $table_name = 'Symbiote_DataChange_Tests_TestTrackedUnderscoreChild';
 
     private static $db = [
         'Title'     => 'Varchar',

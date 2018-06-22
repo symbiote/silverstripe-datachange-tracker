@@ -8,17 +8,17 @@ MyDataObject:
     - Symbiote\DataChange\Extension\ChangeRecordable
 ```
 
-If you are applying the extension to the SiteTree, use the SiteTreeChangeRecordable 
+If you are applying the extension to the SiteTree, use the SiteTreeChangeRecordable
 extension to record publish/unpublish actions.
 
-To track changes to many\_many relationships, you must use a custom 
-ManyManyRelationship class, as well as indicate which relationships need 
+To track changes to many\_many relationships, you must use a custom
+ManyManyRelationship class, as well as indicate which relationships need
 tracking. This can be directly configured via the Injector
 
 For example
 
 ```
-Injector:
+SilverStripe\Core\Injector\Injector:
   SilverStripe\ORM\ManyManyList:
     class: Symbiote\DataChange\Model\TrackedManyManyList
     properties:
@@ -38,7 +38,7 @@ private static $many_many = array(
 
 ## Capturing URL parameters
 
-Set the `save_request_vars` option to 1, and GET and POST vars will be recorded too. 
+Set the `save_request_vars` option to 1, and GET and POST vars will be recorded too.
 
 ```
 Symbiote\DataChange\Model\DataChangeRecord:
@@ -68,7 +68,7 @@ Symbiote\DataChange\Model\DataChangeRecord:
 
 ```
 
-Also, you may wish to blacklist some request variables from being stored 
+Also, you may wish to blacklist some request variables from being stored
 
 ```
 Symbiote\DataChange\Model\DataChangeRecord:
@@ -102,6 +102,6 @@ TeamMember:
 
 Over time, the data recorded will become overwhelming in size. May not be a problem for you, but if it is
 you can regularly prune it to retain just (N) months of data at a time. Simply create the `PruneChangesBeforeJob`
-from the QueuedJob admin section of the CMS, using a constructor param of something like "-6 months". 
+from the QueuedJob admin section of the CMS, using a constructor param of something like "-6 months".
 
-The job will restart itself to run each night, to consistently remove anything older than six months.    
+The job will restart itself to run each night, to consistently remove anything older than six months.

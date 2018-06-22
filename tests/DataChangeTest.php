@@ -2,18 +2,27 @@
 
 namespace Symbiote\DataChange\Tests;
 
-use \SilverStripe\Core\Injector\Injector;
+use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\ManyManyList;
+use Symbiote\DataChange\Service\DataChangeTrackService;
+use Symbiote\DataChange\Model\TrackedManyManyList;
 
 /**
- * 
+ *
  *
  * @author marcus
  */
-class DataChangeTest extends \SilverStripe\Dev\SapphireTest
+class DataChangeTest extends SapphireTest
 {
+    protected $usesDatabase = true;
+
     protected static $extra_dataobjects = [
-        'Symbiote\DataChange\Tests\TestTrackedObject',
-        'Symbiote\DataChange\Tests\TestTrackedChild',
+        TestTrackedObject::class,
+        TestTrackedChild::class,
+        TestTrackedUnderscoreObject::class,
+        TestTrackedUnderscoreChild::class,
     ];
 
     public function testTrackChange()
@@ -21,7 +30,7 @@ class DataChangeTest extends \SilverStripe\Dev\SapphireTest
         $obj = TestTrackedObject::create(['Title' => 'Object title']);
         $obj->write();
 
-        singleton('DataChangeTrackService')->resetChangeCache();
+        $this->getService()->resetChangeCache();
 
         $obj->Title = 'Changed title';
         $obj->write();
@@ -37,45 +46,124 @@ class DataChangeTest extends \SilverStripe\Dev\SapphireTest
         $this->assertEquals('Changed title', $after['Title']);
     }
 
-    public function testManyManyChanges() {
-        $injectorConfig = \SilverStripe\Core\Config\Config::inst()->get(Injector::class);
-
-        $injectorConfig['SilverStripe\ORM\ManyManyList'] = [
-            'class' => 'Symbiote\DataChange\Model\TrackedManyManyList',
-            'properties' => [
-                'trackedRelationships' => [
-                    "Symbiote_DataChange_Tests_TestTrackedObject_Kids",
-                ]
-            ]
-        ];
-
-        \SilverStripe\Core\Config\Config::modify()->set(Injector::class, 'SilverStripe\ORM\ManyManyList', $injectorConfig['SilverStripe\ORM\ManyManyList']);
-
-
+    public function testManyManyChanges_TableWithNoUnderscores()
+    {
+        //
+        // Setup data
+        //
         $obj = TestTrackedObject::create(['Title' => 'Object title']);
         $obj->write();
-
-        singleton('DataChangeTrackService')->resetChangeCache();
+        $this->getService()->resetChangeCache();
 
         $kid = TestTrackedChild::create(['Title' => 'kid object']);
         $kid->write();
+        $this->getService()->resetChangeCache();
 
-        singleton('DataChangeTrackService')->resetChangeCache();
         $kid2 = TestTrackedChild::create(['Title' => 'kid2 object']);
         $kid2->write();
+        $this->getService()->resetChangeCache();
 
-        singleton('DataChangeTrackService')->resetChangeCache();
+        //
+        // Test that we have overriden the injector config
+        //
+        $newInjectorConfig = [
+            ManyManyList::class => [
+                'class' => TrackedManyManyList::class,
+                'properties' => [
+                    'trackedRelationships' => [
+                        "TestTrackedObject_Kids",
+                    ]
+                ]
+            ]
+        ];
+        Injector::inst()->load($newInjectorConfig);
 
+        // We want to check that $obj->Kids() is returning the injected TrackedManyManyList, not ManyManyList
+        $this->assertEquals(TrackedManyManyList::class, get_class($obj->Kids()));
+
+        // We want to make sure the join table looks like how we expect.
+        $this->assertEquals('TestTrackedObject_Kids', $obj->Kids()->getJoinTable());
+
+        //
+        // Test Many many changes
+        //
         $obj->Kids()->add($kid);
-        singleton('DataChangeTrackService')->resetChangeCache();
+        $this->getService()->resetChangeCache();
 
         $obj->Kids()->add($kid2);
-        singleton('DataChangeTrackService')->resetChangeCache();
-        
+        $this->getService()->resetChangeCache();
+
         $changes = $obj->getDataChangesList();
 
         $mapped = $changes->toArray();
-        $this->assertEquals(3, count($mapped));
-        $this->assertEquals('Add "kid2 object" to DataChange', $mapped[0]->ChangeType);
+        $this->assertEquals(
+            3,
+            count($mapped),
+            "Mismatching change records. This means the Injector config is most likely broken. Make sure the 'trackedRelationships' logic is set correctly. (This statement was written in 2018-06-22)"
+        );
+        $this->assertEquals('Add "kid2 object" to Kids', $mapped[0]->ChangeType);
+    }
+
+    public function testAManyManyChanges_TableWithUnderscores()
+    {
+        //
+        // Setup data
+        //
+        $obj = TestTrackedUnderscoreObject::create(['Title' => 'Underscore Object title']);
+        $obj->write();
+        $this->getService()->resetChangeCache();
+
+        $kid = TestTrackedUnderscoreChild::create(['Title' => 'underscore kid object']);
+        $kid->write();
+        $this->getService()->resetChangeCache();
+
+        $kid2 = TestTrackedUnderscoreChild::create(['Title' => 'underscore kid2 object']);
+        $kid2->write();
+        $this->getService()->resetChangeCache();
+
+        //
+        // Test that we have overriden the injector config
+        //
+        $newInjectorConfig = [
+            ManyManyList::class => [
+                'class' => TrackedManyManyList::class,
+                'properties' => [
+                    'trackedRelationships' => [
+                        'Symbiote_DataChange_Tests_TestTrackedUnderscoreObject_Kids',
+                    ]
+                ]
+            ]
+        ];
+        Injector::inst()->load($newInjectorConfig);
+
+        // We want to check that $obj->Kids() is returning the injected TrackedManyManyList, not ManyManyList
+        $this->assertEquals(TrackedManyManyList::class, get_class($obj->Kids()));
+
+        // We want to make sure the join table looks like how we expect.
+        $this->assertEquals('Symbiote_DataChange_Tests_TestTrackedUnderscoreObject_Kids', $obj->Kids()->getJoinTable());
+
+        //
+        // Test Many many changes
+        //
+        $obj->Kids()->add($kid);
+        $this->getService()->resetChangeCache();
+
+        $obj->Kids()->add($kid2);
+        $this->getService()->resetChangeCache();
+
+        $changes = $obj->getDataChangesList();
+
+        $mapped = $changes->toArray();
+        $this->assertEquals(
+            3,
+            count($mapped),
+            "Mismatching change records. This means the Injector config is most likely broken. Make sure the 'trackedRelationships' logic is set correctly. (This statement was written in 2018-06-22)"
+        );
+        $this->assertEquals('Add "underscore kid2 object" to Kids', $mapped[0]->ChangeType);
+    }
+
+    private function getService()
+    {
+        return Injector::inst()->get('DataChangeTrackService');
     }
 }

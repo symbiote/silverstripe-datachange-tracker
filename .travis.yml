@@ -14,6 +14,7 @@ matrix:
       env:
         - DB=MYSQL
         - PHPCS_TEST=1
+        - PHPUNIT_TEST=1
     - php: 7.0
       env:
         - DB=PGSQL
@@ -23,9 +24,6 @@ matrix:
         - PDO=1
 
 before_script:
-  #
-  # Silverstripe 4
-  #
   - phpenv rehash
   - phpenv config-rm xdebug.ini
   - composer validate
@@ -34,8 +32,4 @@ before_script:
   - composer install --prefer-dist --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose --profile
 
 script:
-
-  #
-  # Silverstripe 4
-  #
   - if [[ $PHPUNIT_TEST ]]; then vendor/bin/phpunit; fi

@@ -11,16 +11,16 @@ use SilverStripe\Dev\TestOnly;
  *
  * @author marcus
  */
-class TestTrackedObject extends DataObject implements TestOnly
+class TestTrackedUnderscoreObject extends DataObject implements TestOnly
 {
-    private static $table_name = 'TestTrackedObject';
+    private static $table_name = 'Symbiote_DataChange_Tests_TestTrackedUnderscoreObject';
 
     private static $db = [
         'Title'     => 'Varchar',
     ];
 
     private static $many_many = [
-        'Kids'      => TestTrackedChild::class,
+        'Kids'      => TestTrackedUnderscoreChild::class,
     ];
 
     private static $extensions = [

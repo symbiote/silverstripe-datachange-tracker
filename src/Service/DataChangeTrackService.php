@@ -13,7 +13,7 @@ class DataChangeTrackService
 {
 
     protected $dcr_cache = array();
-    
+
     public $disabled = false;
 
     public function track(DataObject $object, $type = 'Change')
@@ -26,7 +26,7 @@ class DataChangeTrackService
         if (!isset($this->dcr_cache["{$object->ID}-{$object->Classname}-$type"])) {
             $this->dcr_cache["{$object->ID}-{$object->Classname}"] = DataChangeRecord::create();
         }
-        
+
         $this->dcr_cache["{$object->ID}-{$object->Classname}"]->track($object, $type);
     }
 
