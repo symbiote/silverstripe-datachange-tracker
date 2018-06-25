@@ -3,6 +3,7 @@
 namespace Symbiote\DataChange\Admin;
 
 use SilverStripe\Admin\ModelAdmin;
+use Symbiote\DataChange\Model\DataChangeRecord;
 
 /**
  * @author marcus@symbiote.com.au
@@ -10,9 +11,9 @@ use SilverStripe\Admin\ModelAdmin;
  */
 class DataChangeAdmin extends ModelAdmin
 {
-    private static $managed_models = array(
-        'Symbiote\DataChange\Model\DataChangeRecord',
-    );
+    private static $managed_models = [
+        DataChangeRecord::class,
+    ];
 
     private static $url_segment = 'datachanges';
     private static $menu_title = 'Data Changes';

@@ -2,8 +2,8 @@
 
 namespace Symbiote\DataChange\Extension;
 
+use Symbiote\DataChange\Service\DataChangeTrackService;
 use Symbiote\DataChange\Model\DataChangeRecord;
-
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Core\Config\Config;
 
@@ -21,10 +21,11 @@ class ChangeRecordable extends DataExtension
      * @var DataChangeTrackService
      */
     public $dataChangeTrackService;
-    
+
     private static $ignored_fields = array();
-    
+
     protected $isNewObject = false;
+
     protected $changeType = 'Change';
 
     public function __construct()
@@ -66,7 +67,7 @@ class ChangeRecordable extends DataExtension
             return array_combine($ignored[$class], $ignored[$class]);
         }
     }
-    
+
     public function onBeforeVersionedPublish($from, $to)
     {
         if ($this->owner->isInDB()) {

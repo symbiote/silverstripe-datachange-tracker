@@ -100,8 +100,8 @@ class DataChangeRecord extends DataObject
         );
 
         if (strlen($this->Before) && strlen($this->ChangeRecordClass) && class_exists($this->ChangeRecordClass)) {
-            $before = Injector::inst()->create($this->ChangeRecordClass, json_decode($this->Before, true), true);
-            $after  = Injector::inst()->create($this->ChangeRecordClass, json_decode($this->After, true), true);
+            $before = Injector::inst()->create($this->ChangeRecordClass, $this->prepareForDataDifferencer($this->Before), true);
+            $after  = Injector::inst()->create($this->ChangeRecordClass, $this->prepareForDataDifferencer($this->After), true);
             $diff   = DataDifferencer::create($before, $after);
 
             // The solr search service injector dependency causes issues with comparison, since it has public variables that are stored in an array.
@@ -293,5 +293,20 @@ class DataChangeRecord extends DataObject
             }
             return $name;
         }
+    }
+
+    private function prepareForDataDifferencer($jsonData)
+    {
+        // NOTE(Jake): 2018-06-21
+        //
+        // Data Differencer cannot handle arrays within an array,
+        //
+        // So JSON data that comes from MultiValueField / Text DB fields
+        // causes errors to be thrown.
+        //
+        // So solve this, we simply only decode to a depth of 1. (rather than the 512 default)
+        //
+        $resultJsonData = json_decode($jsonData, true, 1);
+        return $resultJsonData;
     }
 }
