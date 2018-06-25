@@ -306,7 +306,7 @@ class DataChangeRecord extends DataObject
         //
         // So solve this, we simply only decode to a depth of 1. (rather than the 512 default)
         //
-        $jsonData = json_decode($jsonData, true, 1);
-        return $jsonData;
+        $resultJsonData = json_decode($jsonData, true, 1);
+        return $resultJsonData;
     }
 }
