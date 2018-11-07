@@ -19,7 +19,12 @@ class SiteTreeChangeRecordable extends ChangeRecordable {
 	public function updateCMSFields(FieldList $fields) {
 		if (Permission::check('CMS_ACCESS_DataChangeAdmin')) {
 			//Get all data changes relating to this page filter them by publish/unpublish
-			$dataChanges = DataChangeRecord::get()->filter('ClassID', $this->owner->ID)->exclude('ChangeType', 'Change');
+            $dataChanges = DataChangeRecord::get()->filter(array(
+                    'ClassID' => $this->owner->ID,
+                    'ClassType' => $this->owner->ClassName
+                ))
+                ->exclude('ChangeType', 'Change');
+
 			//create a gridfield out of them
 			$gridFieldConfig = GridFieldConfig_RecordViewer::create();
 			$publishedGrid = new GridField('PublishStates', 'Published States', $dataChanges, $gridFieldConfig);
