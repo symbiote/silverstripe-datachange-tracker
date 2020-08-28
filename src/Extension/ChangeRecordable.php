@@ -61,7 +61,7 @@ class ChangeRecordable extends DataExtension
 
     public function getIgnoredFields()
     {
-        $ignored = Config::inst()->get('ChangeRecordable', 'ignored_fields');
+        $ignored = Config::inst()->get(ChangeRecordable::class, 'ignored_fields');
         $class = $this->owner->ClassName;
         if (isset($ignored[$class])) {
             return array_combine($ignored[$class], $ignored[$class]);
