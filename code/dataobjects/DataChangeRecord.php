@@ -87,8 +87,8 @@ class DataChangeRecord extends DataObject {
 		);
 
 		if (strlen($this->Before)) {
-			$before = Object::create($this->ClassType, $this->prepareForDataDifferencer($this->Before), true);
-            $after  = Object::create($this->ClassType, $this->prepareForDataDifferencer($this->After), true);
+			$before = SS_Object::create($this->ClassType, $this->prepareForDataDifferencer($this->Before), true);
+            $after  = SS_Object::create($this->ClassType, $this->prepareForDataDifferencer($this->After), true);
 			$diff 	= DataDifferencer::create($before, $after);
 
             // The solr search service injector dependency causes issues with comparison, since it has public variables that are stored in an array.
