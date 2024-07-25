@@ -12,9 +12,9 @@ use SilverStripe\ORM\DataObject;
  */
 class TrackedManyManyList extends ManyManyList
 {
-    public $trackedRelationships = array();
+    public $trackedRelationships = [];
 
-    public function add($item, $extraFields = array())
+    public function add($item, $extraFields = [])
     {
         $this->recordManyManyChange(__FUNCTION__, $item);
         $result = parent::add($item, $extraFields);
@@ -58,7 +58,7 @@ class TrackedManyManyList extends ManyManyList
                 $item = $class::get()->byID($item);
             }
             $join = $type === 'add' ? ' to ' : ' from ';
-            $type = ucfirst($type) . ' "' . $item->Title . '"' . $join . $relationName;
+            $type = ucfirst((string) $type) . ' "' . $item->Title . '"' . $join . $relationName;
             $onItem->RelatedItem = $item->ClassName . ' #' . $item->ID;
             singleton('DataChangeTrackService')->track($onItem, $type);
         }

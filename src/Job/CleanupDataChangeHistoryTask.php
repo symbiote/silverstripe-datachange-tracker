@@ -26,7 +26,7 @@ class CleanupDataChangeHistoryTask extends BuildTask
             return;
         }
         
-        $since = strtotime($since);
+        $since = strtotime((string) $since);
         if (!$since) {
             echo "Please specify an 'older' param with a date older than which to prune (in strtotime friendly format)<br/>\n";
             return;

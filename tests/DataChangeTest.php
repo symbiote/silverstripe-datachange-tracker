@@ -79,7 +79,7 @@ class DataChangeTest extends SapphireTest
         Injector::inst()->load($newInjectorConfig);
 
         // We want to check that $obj->Kids() is returning the injected TrackedManyManyList, not ManyManyList
-        $this->assertEquals(TrackedManyManyList::class, get_class($obj->Kids()));
+        $this->assertEquals(TrackedManyManyList::class, $obj->Kids()::class);
 
         // We want to make sure the join table looks like how we expect.
         $this->assertEquals('TestTrackedObject_Kids', $obj->Kids()->getJoinTable());
@@ -137,7 +137,7 @@ class DataChangeTest extends SapphireTest
         Injector::inst()->load($newInjectorConfig);
 
         // We want to check that $obj->Kids() is returning the injected TrackedManyManyList, not ManyManyList
-        $this->assertEquals(TrackedManyManyList::class, get_class($obj->Kids()));
+        $this->assertEquals(TrackedManyManyList::class, $obj->Kids()::class);
 
         // We want to make sure the join table looks like how we expect.
         $this->assertEquals('Symbiote_DataChange_Tests_TestTrackedUnderscoreObject_Kids', $obj->Kids()->getJoinTable());

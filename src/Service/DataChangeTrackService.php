@@ -9,10 +9,10 @@ use SilverStripe\ORM\DataObject;
 /**
  * @author Stephen McMahon <stephen@symbiote.com.au>
  */
-class DataChangeTrackService
+class DataChangeTrackService implements \Stringable
 {
 
-    protected $dcr_cache = array();
+    protected $dcr_cache = [];
 
     public $disabled = false;
 
@@ -34,7 +34,7 @@ class DataChangeTrackService
         $this->dcr_cache = [];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return '';
     }

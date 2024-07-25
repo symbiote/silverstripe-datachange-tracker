@@ -20,14 +20,11 @@ use SilverStripe\Core\Config\Config;
 class SignificantChangeRecordable extends DataExtension
 {
 
-    private static $ignored_fields = array();
+    private static $ignored_fields = [];
 
-    private static $significant_fields = array();
+    private static $significant_fields = [];
 
-    private static $db = array(
-        'LastSignificantChange' => 'DBDatetime',
-        'ChangeDescription' => 'Text'
-    );
+    private static $db = ['LastSignificantChange' => 'DBDatetime', 'ChangeDescription' => 'Text'];
 
     public function updateCMSFields(FieldList $fields)
     {

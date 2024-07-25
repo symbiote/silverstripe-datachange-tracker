@@ -22,7 +22,7 @@ class ChangeRecordable extends DataExtension
      */
     public $dataChangeTrackService;
 
-    private static $ignored_fields = array();
+    private static $ignored_fields = [];
 
     protected $isNewObject = false;
 

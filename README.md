@@ -6,7 +6,7 @@
 [![Total Downloads](https://poser.pugx.org/symbiote/silverstripe-datachange-tracker/downloads.svg)](https://packagist.org/packages/symbiote/silverstripe-datachange-tracker)
 [![License](https://poser.pugx.org/symbiote/silverstripe-datachange-tracker/license.svg)](https://github.com/symbiote/silverstripe-datachange-tracker/blob/master/LICENSE.md)
 
-Compatible with SilverStripe 4
+Compatible with SilverStripe 4 and 5
 
 ## Maintainers
 
@@ -28,21 +28,10 @@ composer require symbiote/silverstripe-datachange-tracker:~5.0
 
 ## Requirements
 
-* SilverStripe 4
+* SilverStripe 4.12 || 5
 
 ## Documentation 
 
 * [Quick Start](docs/en/quick-start.md)
 * [License](LICENSE.md)
 * [Contributing](CONTRIBUTING.md)
-
-## Version details
-
-*3.2.0*
-
-* Added pruning of data via queuedjobs
-
-*3.0.0*
-
-* Removed static DataChangeRecord::track() method
-
