@@ -3,6 +3,7 @@
 namespace Symbiote\DataChange\Model;
 
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ToggleCompositeField;
@@ -36,9 +37,24 @@ class DataChangeRecord extends DataObject
         'GetVars' => 'Text',
         'PostVars' => 'Text',
     ];
-    private static $has_one = ['ChangedBy' => \SilverStripe\Security\Member::class, 'ChangeRecord' => \SilverStripe\ORM\DataObject::class];
-    private static $summary_fields    = ['ChangeType' => 'Change Type', 'ChangeRecordClass' => 'Record Class', 'ChangeRecordID' => 'Record ID', 'ObjectTitle' => 'Record Title', 'ChangedBy.Title' => 'User', 'Created' => 'Modification Date'];
-    private static $searchable_fields = ['ChangeType', 'ObjectTitle', 'ChangeRecordClass', 'ChangeRecordID'];
+    private static $has_one = [
+        'ChangedBy' => Member::class,
+        'ChangeRecord' => DataObject::class
+    ];
+    private static $summary_fields    = [
+        'ChangeType' => 'Change Type',
+        'ChangeRecordClass' => 'Record Class',
+        'ChangeRecordID' => 'Record ID',
+        'ObjectTitle' => 'Record Title',
+        'ChangedBy.Title' => 'User',
+        'Created' => 'Modification Date'
+    ];
+    private static $searchable_fields = [
+        'ChangeType',
+        'ObjectTitle',
+        'ChangeRecordClass',
+        'ChangeRecordID'
+    ];
     private static $default_sort      = 'ID DESC';
 
     /**
@@ -58,12 +74,29 @@ class DataChangeRecord extends DataObject
             ToggleCompositeField::create(
                 'Details',
                 'Details',
-                [ReadonlyField::create('ChangeType', 'Type of change'), ReadonlyField::create('ChangeRecordClass', 'Record Class'), ReadonlyField::create('ChangeRecordID', 'Record ID'), ReadonlyField::create('ObjectTitle', 'Record Title'), ReadonlyField::create('Created', 'Modification Date'), ReadonlyField::create('Stage', 'Stage'), ReadonlyField::create('User', 'User', $this->getMemberDetails()), ReadonlyField::create('CurrentURL', 'URL'), ReadonlyField::create('Referer', 'Referer'), ReadonlyField::create('RemoteIP', 'Remote IP'), ReadonlyField::create('Agent', 'Agent')]
+                [
+                    ReadonlyField::create('ChangeType', 'Type of change'),
+                    ReadonlyField::create('ChangeRecordClass', 'Record Class'),
+                    ReadonlyField::create('ChangeRecordID', 'Record ID'),
+                    ReadonlyField::create('ObjectTitle', 'Record Title'),
+                    ReadonlyField::create('Created', 'Modification Date'),
+                    ReadonlyField::create('Stage', 'Stage'),
+                    ReadonlyField::create('User', 'User', $this->getMemberDetails()),
+                    ReadonlyField::create('CurrentURL', 'URL'),
+                    ReadonlyField::create('Referer', 'Referer'),
+                    ReadonlyField::create('RemoteIP', 'Remote IP'),
+                    ReadonlyField::create('Agent', 'Agent')
+                ]
             )->setStartClosed(false)->addExtraClass('datachange-field'),
             ToggleCompositeField::create(
                 'RawData',
                 'Raw Data',
-                [ReadonlyField::create('Before'), ReadonlyField::create('After'), ReadonlyField::create('GetVars'), ReadonlyField::create('PostVars')]
+                [
+                    ReadonlyField::create('Before'),
+                    ReadonlyField::create('After'),
+                    ReadonlyField::create('GetVars'),
+                    ReadonlyField::create('PostVars')
+                ]
             )->setStartClosed(false)->addExtraClass('datachange-field')
         );
 
@@ -95,10 +128,11 @@ class DataChangeRecord extends DataObject
             }
 
             $fields->insertBefore(
+                'RawData',
                 ToggleCompositeField::create('FieldChanges', 'Changed Fields', $changedFields)
                     ->setStartClosed(false)
-                    ->addExtraClass('datachange-field'),
-                'RawData'
+                    ->addExtraClass('datachange-field')
+
             );
         }
 
@@ -205,10 +239,9 @@ class DataChangeRecord extends DataObject
             $this->PostVars = isset($_POST) ? json_encode($_POST) : null;
         }
 
-        $this->ChangedByID = Member::currentUserID();
-
-        if (Member::currentUserID() && Member::currentUser()) {
-            $this->CurrentEmail = Member::currentUser()->Email;
+        if ($member = Security::getCurrentUser()) {
+            $this->ChangedByID = $member->ID;
+            $this->CurrentEmail = $member->Email;
         }
 
         if (isset($_SERVER['SERVER_NAME'])) {

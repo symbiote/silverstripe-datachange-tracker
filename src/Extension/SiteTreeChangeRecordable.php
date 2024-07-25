@@ -40,9 +40,12 @@ class SiteTreeChangeRecordable extends ChangeRecordable
             $gridFieldConfig = GridFieldConfig_RecordViewer::create();
             $publishedGrid   = new GridField('PublishStates', 'Published States', $dataChanges, $gridFieldConfig);
             $dataColumns     = $publishedGrid->getConfig()->getComponentByType(\SilverStripe\Forms\GridField\GridFieldDataColumns::class);
-            $dataColumns->setDisplayFields(
-                ['ChangeType' => 'Change Type', 'ObjectTitle' => 'Page Title', 'ChangedBy.Title' => 'User', 'Created' => 'Modification Date']
-            );
+            $dataColumns->setDisplayFields([
+                'ChangeType' => 'Change Type',
+                'ObjectTitle' => 'Page Title',
+                'ChangedBy.Title' => 'User',
+                'Created' => 'Modification Date'
+            ]);
 
             //linking through to the datachanges modeladmin
 

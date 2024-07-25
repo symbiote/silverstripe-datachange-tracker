@@ -24,7 +24,10 @@ class SignificantChangeRecordable extends DataExtension
 
     private static $significant_fields = [];
 
-    private static $db = ['LastSignificantChange' => 'DBDatetime', 'ChangeDescription' => 'Text'];
+    private static $db = [
+        'LastSignificantChange' => 'DBDatetime',
+        'ChangeDescription' => 'Text'
+    ];
 
     public function updateCMSFields(FieldList $fields)
     {
