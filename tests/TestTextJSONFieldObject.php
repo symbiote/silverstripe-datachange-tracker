@@ -25,7 +25,8 @@ class TestTextJSONFieldObject extends DataObject implements TestOnly
      *
      * This getter pattern was used in at least 1 internal Symbiote project.
      */
-    public function getTextFieldWithJSON() {
+    public function getTextFieldWithJSON()
+    {
         $value = $this->getField('TextFieldWithJSON');
         if (is_string($value)) {
             $value = json_decode($value, true);

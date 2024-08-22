@@ -120,7 +120,7 @@ class DataChangeRecord extends DataObject
                     $prop = json_encode($prop);
                 }
                 $changedFields[] = $readOnly        = \SilverStripe\Forms\ReadonlyField::create(
-                    'ChangedField'.$field,
+                    'ChangedField' . $field,
                     $field,
                     $prop
                 );
@@ -132,7 +132,6 @@ class DataChangeRecord extends DataObject
                 ToggleCompositeField::create('FieldChanges', 'Changed Fields', $changedFields)
                     ->setStartClosed(false)
                     ->addExtraClass('datachange-field')
-
             );
         }
 
@@ -147,7 +146,7 @@ class DataChangeRecord extends DataObject
                     $value,
                     'forTemplate'
                 )) {
-                    $field->setValue('[Missing '.$value::class.'::forTemplate]');
+                    $field->setValue('[Missing ' . $value::class . '::forTemplate]');
                 }
             }
         }
@@ -249,7 +248,7 @@ class DataChangeRecord extends DataObject
             $protocol = isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on" ? 'https://' : 'http://';
             $port = $_SERVER['SERVER_PORT'] ?? '80';
 
-            $this->CurrentURL = $protocol.$_SERVER["SERVER_NAME"].":".$port.$_SERVER["REQUEST_URI"];
+            $this->CurrentURL = $protocol . $_SERVER["SERVER_NAME"] . ":" . $port . $_SERVER["REQUEST_URI"];
         } elseif (Director::is_cli()) {
             $this->CurrentURL = 'CLI';
         } else {
@@ -277,7 +276,7 @@ class DataChangeRecord extends DataObject
      * */
     public function getTitle()
     {
-        return $this->ChangeRecordClass.' #'.$this->ChangeRecordID;
+        return $this->ChangeRecordClass . ' #' . $this->ChangeRecordID;
     }
 
     /**

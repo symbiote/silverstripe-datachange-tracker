@@ -30,7 +30,8 @@ class DataChangeTrackService implements \Stringable
         $this->dcr_cache["{$object->ID}-{$object->Classname}"]->track($object, $type);
     }
 
-    public function resetChangeCache() {
+    public function resetChangeCache()
+    {
         $this->dcr_cache = [];
     }
 

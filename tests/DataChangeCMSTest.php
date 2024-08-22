@@ -50,7 +50,7 @@ class DataChangeCMSTest extends FunctionalTest
         // View in the CMS.
         $this->logInWithPermission('ADMIN');
         $dataChangeTrackEditID = $dataChangeTrackRecordIds[0];
-        $editLink = 'admin/datachanges/Symbiote-DataChange-Model-DataChangeRecord/EditForm/field/Symbiote-DataChange-Model-DataChangeRecord/item/'.$dataChangeTrackEditID.'/edit';
+        $editLink = 'admin/datachanges/Symbiote-DataChange-Model-DataChangeRecord/EditForm/field/Symbiote-DataChange-Model-DataChangeRecord/item/' . $dataChangeTrackEditID . '/edit';
 
         // NOTE(Jake): 2018-06-25
         //

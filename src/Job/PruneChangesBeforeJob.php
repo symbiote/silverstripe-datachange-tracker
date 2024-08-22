@@ -69,4 +69,3 @@ class PruneChangesBeforeJob extends AbstractQueuedJob
         Injector::inst()->get(QueuedJobService::class)->queueJob($job, $next);
     }
 }
-
