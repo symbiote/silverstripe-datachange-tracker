@@ -24,7 +24,7 @@ class PruneChangesBeforeJob extends AbstractQueuedJob
     {
         $ts = 0;
         if ($priorTo) {
-            $ts = strtotime($priorTo);
+            $ts = strtotime((string) $priorTo);
         }
         if ($ts <= 0) {
             $ts = time() - 90 * 86400;
@@ -69,4 +69,3 @@ class PruneChangesBeforeJob extends AbstractQueuedJob
         Injector::inst()->get(QueuedJobService::class)->queueJob($job, $next);
     }
 }
-

@@ -50,7 +50,7 @@ class DataChangeCMSTest extends FunctionalTest
         // View in the CMS.
         $this->logInWithPermission('ADMIN');
         $dataChangeTrackEditID = $dataChangeTrackRecordIds[0];
-        $editLink = 'admin/datachanges/Symbiote-DataChange-Model-DataChangeRecord/EditForm/field/Symbiote-DataChange-Model-DataChangeRecord/item/'.$dataChangeTrackEditID.'/edit';
+        $editLink = 'admin/datachanges/Symbiote-DataChange-Model-DataChangeRecord/EditForm/field/Symbiote-DataChange-Model-DataChangeRecord/item/' . $dataChangeTrackEditID . '/edit';
 
         // NOTE(Jake): 2018-06-25
         //
@@ -66,13 +66,11 @@ class DataChangeCMSTest extends FunctionalTest
         $body = $response->getBody();
         $this->assertTrue(
             true,
-            strpos($body, 'Get Vars') !== false,
-            'Cannot find \'Get Vars\' field to prove that we\'re actually on the editing DataChangeRecord page.'
+            str_contains($body, 'Get Vars')
         );
         $this->assertTrue(
             true,
-            strpos($body, 'Post Vars') !== false,
-            'Cannot find \'Post Vars\' field to prove that we\'re actually on the editing DataChangeRecord page.'
+            str_contains($body, 'Post Vars')
         );
     }
 }

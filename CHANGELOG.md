@@ -1,9 +1,5 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+For more information on changes and releases, please visit [Releases](https://github.com/symbiote/silverstripe-datachange-tracker/releases).
 
-This project adheres to [Semantic Versioning](http://semver.org/).
-
-## [5.0.0]
-
-* First SilverStripe 4 compatible version.
+This project adheres to [Semantic Versioning](http://semver.org/)

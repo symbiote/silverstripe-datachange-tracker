@@ -22,7 +22,7 @@ class ChangeRecordable extends DataExtension
      */
     public $dataChangeTrackService;
 
-    private static $ignored_fields = array();
+    private static $ignored_fields = [];
 
     protected $isNewObject = false;
 
@@ -80,7 +80,8 @@ class ChangeRecordable extends DataExtension
      *
      * @return \SilverStripe\ORM\DataList
      */
-    public function getDataChangesList() {
+    public function getDataChangesList()
+    {
         return DataChangeRecord::get()->filter([
             'ChangeRecordID' => $this->owner->ID,
             'ChangeRecordClass' => $this->owner->ClassName
