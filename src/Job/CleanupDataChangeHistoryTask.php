@@ -2,7 +2,7 @@
 
 namespace Symbiote\DataChange\Job;
 
-use Symbiote\DataChange\DataChangeRecord;
+use Symbiote\DataChange\Model\DataChangeRecord;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\Queries\SQLDelete;
